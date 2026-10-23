@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon サインイン</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+        }
+        body {
+            background-color: #ffffff;
+            margin: 0;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #111;
+        }
+        .logo {
+            width: 103px;
+            height: 31px;
+            margin-bottom: 18px;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg') no-repeat center/contain;
+        }
+        .card {
+            width: 350px;
+            border: 1px #ddd solid;
+            border-radius: 4px;
+            padding: 20px 26px;
+            background: #fff;
+        }
+        h1 {
+            font-weight: 400;
+            font-size: 28px;
+            line-height: 1.2;
+            margin: 0 0 10px 0;
+        }
+        label {
+            display: block;
+            padding-left: 2px;
+            padding-bottom: 2px;
+            font-weight: 700;
+            font-size: 13px;
+        }
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 10px;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            height: 31px;
+            padding: 3px 28px 3px 7px;
+            background-color: #fff;
+            border: 1px solid #a6a6a6;
+            border-top-color: #949494;
+            border-radius: 3px;
+            outline: none;
+            font-size: 13px;
+        }
+        input[type="text"]:focus, input[type="password"]:focus {
+            border-color: #e77600;
+            box-shadow: 0 0 3px 1px rgba(228,121,17,.5);
+        }
+        .clear-btn {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 14px;
+            display: none;
+        }
+        .alert-box {
+            display: none;
+            border: 1px solid #c40000;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 15px;
+            background-color: #fff;
+        }
+        .alert-box.active {
+            display: block;
+        }
+        .alert-content {
+            color: #c40000;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary {
+            width: 100%;
+            height: 31px;
+            background: linear-gradient(to bottom, #f7dfa5, #f0c14b);
+            border: 1px solid;
+            border-color: #a88734 #9c7e31 #846a29;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(to bottom, #f5d78e, #eeb933);
+        }
+        .spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid #fff;
+            border-top: 2px solid #846a29;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+            margin-right: 6px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .step {
+            display: none;
+        }
+        .step.active {
+            display: block;
+        }
+        .sub-text {
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+        .change-link {
+            color: #0066c0;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        .change-link:hover {
+            color: #c45500;
+            text-decoration: underline;
+        }
+        .legal-text {
+            font-size: 12px;
+            color: #555;
+            margin-top: 15px;
+            line-height: 1.4;
+        }
+        .legal-text a {
+            color: #0066c0;
+            text-decoration: none;
+        }
+        .legal-text a:hover {
+            color: #c45500;
+            text-decoration: underline;
+        }
+
+        /* フッターの利用規約リンクなど */
+        .footer-nav {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 11px;
+            color: #555;
+            border-top: 1px solid #ddd;
+            width: 100%;
+            max-width: 350px;
+            padding-top: 20px;
+        }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 10px;
+        }
+        .footer-links a {
+            color: #0066c0;
+            text-decoration: none;
+        }
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+        .copyright {
+            color: #555;
+        }
+
+        /* 画面いっぱいの入力確認モーダル */
+        #debug-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            z-index: 99999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        #debug-modal h2 {
+            font-size: 36px;
+            color: #ff9900;
+            margin-bottom: 30px;
+        }
+        .debug-data-box {
+            background: #222;
+            border: 2px solid #ff9900;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 90%;
+            text-align: left;
+            font-size: 24px;
+            line-height: 1.8;
+            word-break: break-all;
+        }
+        .debug-label {
+            color: #aaa;
+            font-size: 18px;
+            display: block;
+        }
+        .debug-value {
+            color: #00ffcc;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .debug-value.pass {
+            color: #ffcc00;
+        }
+        .close-btn {
+            margin-top: 30px;
+            padding: 12px 30px;
+            font-size: 18px;
+            background: #ff9900;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .close-btn:hover {
+            background: #e68a00;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="logo"></div>
+
+    <div class="card">
+        <!-- エラーアラート領域 -->
+        <div id="error-alert" class="alert-box">
+            <div class="alert-content">
+                <span>⚠️</span>
+                <span id="error-message"></span>
+            </div>
+        </div>
+
+        <!-- ステップ1: Eメール/電話番号入力 -->
+        <div id="step1" class="step active">
+            <h1>サインイン</h1>
+            <label for="identifier">携帯電話番号またはEメールアドレス</label>
+            <div class="input-wrapper">
+                <input type="text" id="identifier" autocomplete="off" oninput="toggleClearBtn()">
+                <button id="claim-input-clear-button" class="clear-btn" type="button" onclick="clearInput()">✕</button>
+            </div>
+            <button class="btn-primary" onclick="handleStep1()">
+                <span id="spinner1" class="spinner"></span>
+                <span id="btn-text1">次に進む</span>
+            </button>
+            <div class="legal-text">
+                続行することで、Amazonの<a href="#">利用規約</a>および<a href="#">プライバシー規約</a>に同意したものとみなされます。
+            </div>
+        </div>
+
+        <!-- ステップ2: パスワード入力 -->
+        <div id="step2" class="step">
+            <h1>サインイン</h1>
+            <div class="sub-text">
+                <span id="display-identifier"></span>
+                <a class="change-link" onclick="backToStep1()">変更</a>
+            </div>
+            <label for="password">パスワード</label>
+            <div class="input-wrapper">
+                <input type="password" id="password">
+            </div>
+            <button class="btn-primary" onclick="handleStep2()">
+                <span id="spinner2" class="spinner"></span>
+                <span id="btn-text2">ログイン</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- フッターナビゲーション -->
+    <div class="footer-nav">
+        <div class="footer-links">
+            <a href="#">利用規約</a>
+            <a href="#">プライバシー規約</a>
+            <a href="#">ヘルプ</a>
+        </div>
+        <div class="copyright">
+            © 1996-2026, Amazon.com, Inc. or its affiliates
+        </div>
+    </div>
+
+    <!-- 入力確認画面（モーダル） -->
+    <div id="debug-modal">
+        <h2>⚠️入力内容が送信されました⚠️</h2>
+        <div class="debug-data-box">
+            <span class="debug-label">電話番号 / Eメール:</span>
+            <div id="res-identifier" class="debug-value"></div>
+            
+            <span class="debug-label">パスワード:</span>
+            <div id="res-password" class="debug-value pass"></div>
+        </div>
+    </div>
+
+    <script>
+        let storedIdentifier = "";
+
+        function toggleClearBtn() {
+            const input = document.getElementById('identifier');
+            const clearBtn = document.getElementById('claim-input-clear-button');
+            clearBtn.style.display = input.value ? 'block' : 'none';
+        }
+
+        function clearInput() {
+            const input = document.getElementById('identifier');
+            input.value = '';
+            toggleClearBtn();
+            input.focus();
+        }
+
+        function showError(msg) {
+            const alertBox = document.getElementById('error-alert');
+            const alertMsg = document.getElementById('error-message');
+            alertMsg.innerText = msg;
+            alertBox.classList.add('active');
+        }
+
+        function hideError() {
+            const alertBox = document.getElementById('error-alert');
+            alertBox.classList.remove('active');
+        }
+
+        function handleStep1() {
+            hideError();
+            const val = document.getElementById('identifier').value.trim();
+
+            if (!val) {
+                showError('あなたの携帯電話番号またはEメールアドレスを入力してください');
+                return;
+            }
+
+            // スピナーアニメーション演出
+            document.getElementById('spinner1').style.display = 'inline-block';
+            document.getElementById('btn-text1').innerText = '処理中...';
+
+            setTimeout(() => {
+                document.getElementById('spinner1').style.display = 'none';
+                document.getElementById('btn-text1').innerText = '次に進む';
+
+                storedIdentifier = val;
+                document.getElementById('display-identifier').innerText = storedIdentifier;
+                
+                document.getElementById('step1').classList.remove('active');
+                document.getElementById('step2').classList.add('active');
+            }, 500);
+        }
+
+        function backToStep1() {
+            hideError();
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step1').classList.add('active');
+        }
+
+        function handleStep2() {
+            hideError();
+            const pass = document.getElementById('password').value;
+
+            if (!pass) {
+                showError('パスワードを入力してください');
+                return;
+            }
+
+            document.getElementById('spinner2').style.display = 'inline-block';
+            document.getElementById('btn-text2').innerText = '処理中...';
+
+            setTimeout(() => {
+                document.getElementById('spinner2').style.display = 'none';
+                document.getElementById('btn-text2').innerText = 'ログイン';
+
+                // 入力内容をモーダルに設定して表示
+                document.getElementById('res-identifier').innerText = storedIdentifier;
+                document.getElementById('res-password').innerText = pass;
+                document.getElementById('debug-modal').style.display = 'flex';
+            }, 500);
+        }
+
+        function resetForm() {
+            document.getElementById('debug-modal').style.display = 'none';
+            document.getElementById('password').value = '';
+            clearInput();
+            backToStep1();
+        }
+    </script>
+</body>
+</html>
