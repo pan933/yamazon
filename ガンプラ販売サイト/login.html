@@ -1,415 +1,465 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amazon サインイン</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
-        }
-        body {
-            background-color: #ffffff;
-            margin: 0;
-            padding: 20px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #111;
-        }
-        .logo {
-            width: 103px;
-            height: 31px;
-            margin-bottom: 18px;
-            background: url('https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg') no-repeat center/contain;
-        }
-        .card {
-            width: 350px;
-            border: 1px #ddd solid;
-            border-radius: 4px;
-            padding: 20px 26px;
-            background: #fff;
-        }
-        h1 {
-            font-weight: 400;
-            font-size: 28px;
-            line-height: 1.2;
-            margin: 0 0 10px 0;
-        }
-        label {
-            display: block;
-            padding-left: 2px;
-            padding-bottom: 2px;
-            font-weight: 700;
-            font-size: 13px;
-        }
-        .input-wrapper {
-            position: relative;
-            margin-bottom: 10px;
-        }
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            height: 31px;
-            padding: 3px 28px 3px 7px;
-            background-color: #fff;
-            border: 1px solid #a6a6a6;
-            border-top-color: #949494;
-            border-radius: 3px;
-            outline: none;
-            font-size: 13px;
-        }
-        input[type="text"]:focus, input[type="password"]:focus {
-            border-color: #e77600;
-            box-shadow: 0 0 3px 1px rgba(228,121,17,.5);
-        }
-        .clear-btn {
-            position: absolute;
-            right: 5px;
-            top: 50%;
-            transform: translateY(-50%);
-            border: none;
-            background: none;
-            color: #888;
-            cursor: pointer;
-            font-size: 14px;
-            display: none;
-        }
-        .alert-box {
-            display: none;
-            border: 1px solid #c40000;
-            border-radius: 4px;
-            padding: 10px;
-            margin-bottom: 15px;
-            background-color: #fff;
-        }
-        .alert-box.active {
-            display: block;
-        }
-        .alert-content {
-            color: #c40000;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn-primary {
-            width: 100%;
-            height: 31px;
-            background: linear-gradient(to bottom, #f7dfa5, #f0c14b);
-            border: 1px solid;
-            border-color: #a88734 #9c7e31 #846a29;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 10px;
-        }
-        .btn-primary:hover {
-            background: linear-gradient(to bottom, #f5d78e, #eeb933);
-        }
-        .spinner {
-            width: 14px;
-            height: 14px;
-            border: 2px solid #fff;
-            border-top: 2px solid #846a29;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            display: none;
-            margin-right: 6px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .step {
-            display: none;
-        }
-        .step.active {
-            display: block;
-        }
-        .sub-text {
-            font-size: 13px;
-            margin-bottom: 15px;
-        }
-        .change-link {
-            color: #0066c0;
-            cursor: pointer;
-            text-decoration: none;
-            font-size: 12px;
-            margin-left: 5px;
-        }
-        .change-link:hover {
-            color: #c45500;
-            text-decoration: underline;
-        }
-        .legal-text {
-            font-size: 12px;
-            color: #555;
-            margin-top: 15px;
-            line-height: 1.4;
-        }
-        .legal-text a {
-            color: #0066c0;
-            text-decoration: none;
-        }
-        .legal-text a:hover {
-            color: #c45500;
-            text-decoration: underline;
-        }
-
-        /* フッターの利用規約リンクなど */
-        .footer-nav {
-            margin-top: 30px;
-            text-align: center;
-            font-size: 11px;
-            color: #555;
-            border-top: 1px solid #ddd;
-            width: 100%;
-            max-width: 350px;
-            padding-top: 20px;
-        }
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            margin-bottom: 10px;
-        }
-        .footer-links a {
-            color: #0066c0;
-            text-decoration: none;
-        }
-        .footer-links a:hover {
-            text-decoration: underline;
-        }
-        .copyright {
-            color: #555;
-        }
-
-        /* 画面いっぱいの入力確認モーダル */
-        #debug-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.9);
-            color: #fff;
-            z-index: 99999;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 20px;
-        }
-        #debug-modal h2 {
-            font-size: 36px;
-            color: #ff9900;
-            margin-bottom: 30px;
-        }
-        .debug-data-box {
-            background: #222;
-            border: 2px solid #ff9900;
-            padding: 30px;
-            border-radius: 8px;
-            max-width: 600px;
-            width: 90%;
-            text-align: left;
-            font-size: 24px;
-            line-height: 1.8;
-            word-break: break-all;
-        }
-        .debug-label {
-            color: #aaa;
-            font-size: 18px;
-            display: block;
-        }
-        .debug-value {
-            color: #00ffcc;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        .debug-value.pass {
-            color: #ffcc00;
-        }
-        .close-btn {
-            margin-top: 30px;
-            padding: 12px 30px;
-            font-size: 18px;
-            background: #ff9900;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .close-btn:hover {
-            background: #e68a00;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amazon.co.jp | ガンプラ・プラモデル・模型ストア</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+      background-color: #e3e6e6;
+      margin: 0;
+      padding: 0;
+    }
+    .amazon-btn-yellow {
+      background: linear-gradient(to bottom, #f7dfa5, #f0c14b);
+      border: 1px solid #a88734;
+      border-color: #a88734 #9c7e31 #846a29;
+    }
+    .amazon-btn-yellow:hover {
+      background: linear-gradient(to bottom, #f5d78e, #eeb933);
+    }
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .img-fallback {
+      background: #232f3e;
+      color: #febd69;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-align: center;
+      padding: 0.5rem;
+    }
+  </style>
 </head>
-<body>
+<body class="min-h-screen text-[#0F1111] flex flex-col justify-between">
 
-    <div class="logo"></div>
+  <!-- ==================== SIDE NAV (HAMBURGER MENU) ==================== -->
+  <div id="sideMenuOverlay" onclick="toggleSideMenu(false)" class="fixed inset-0 bg-black/70 z-50 hidden transition-opacity"></div>
+  <div id="sideMenu" class="fixed inset-y-0 left-0 w-80 bg-white z-50 transform -translate-x-full transition-transform duration-300 overflow-y-auto">
+    <a href="login.html" class="bg-[#232f3e] text-white p-4 font-bold text-lg flex items-center gap-3 hover:bg-[#37475a]">
+      <i class="fa-solid fa-circle-user text-2xl"></i> こんにちは, ログイン
+    </a>
+    <div class="p-4 space-y-4 text-sm text-gray-800">
+      <div class="font-bold text-gray-900 border-b pb-2">ガンプラストア カテゴリー</div>
+      <a href="#" onclick="filterGrade('HG'); toggleSideMenu(false);" class="block hover:bg-gray-100 p-2 rounded">HG (ハイグレード) 1/144</a>
+      <a href="#" onclick="filterGrade('RG'); toggleSideMenu(false);" class="block hover:bg-gray-100 p-2 rounded">RG (リアルグレード) 1/144</a>
+      <a href="#" onclick="filterGrade('MG'); toggleSideMenu(false);" class="block hover:bg-gray-100 p-2 rounded">MG (マスターグレード) 1/100</a>
+      <a href="#" onclick="filterGrade('PG'); toggleSideMenu(false);" class="block hover:bg-gray-100 p-2 rounded">PG (パーフェクトグレード) 1/60</a>
+      <a href="#" onclick="filterGrade('EG'); toggleSideMenu(false);" class="block hover:bg-gray-100 p-2 rounded">ENTRY GRADE (エントリーグレード)</a>
+      <a href="#" onclick="filterGrade('TOOL'); toggleSideMenu(false);" class="block hover:bg-gray-100 p-2 rounded">工具・ヤスリ・塗料・スミ入れ</a>
+      <div class="font-bold text-gray-900 border-b pb-2 pt-2">ヘルプ & 設定</div>
+      <a href="login.html" class="block hover:bg-gray-100 p-2 rounded">アカウントサービス</a>
+    </div>
+  </div>
 
-    <div class="card">
-        <!-- エラーアラート領域 -->
-        <div id="error-alert" class="alert-box">
-            <div class="alert-content">
-                <span>⚠️</span>
-                <span id="error-message"></span>
-            </div>
+  <div>
+    <!-- ==================== 1. AMAZON HEADER ==================== -->
+    <header class="bg-[#131921] text-white sticky top-0 z-40 shadow-md">
+      <div class="max-w-[1500px] mx-auto flex items-center justify-between px-3 py-1.5 gap-3">
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center p-1.5 border border-transparent hover:border-white rounded text-white font-bold text-2xl tracking-tight leading-none">
+          amazon<span class="text-[#f90] font-normal text-xs leading-none ml-0.5">.co.jp</span>
+        </a>
+
+        <!-- Deliver To -->
+        <div class="hidden xl:flex items-center p-1.5 border border-transparent hover:border-white rounded cursor-pointer leading-tight">
+          <i class="fa-solid fa-location-dot text-base mr-1.5 text-gray-300"></i>
+          <div>
+            <span class="text-gray-400 block text-[10px]">お届け先</span>
+            <span class="font-bold text-xs">日本</span>
+          </div>
         </div>
 
-        <!-- ステップ1: Eメール/電話番号入力 -->
-        <div id="step1" class="step active">
-            <h1>サインイン</h1>
-            <label for="identifier">携帯電話番号またはEメールアドレス</label>
-            <div class="input-wrapper">
-                <input type="text" id="identifier" autocomplete="off" oninput="toggleClearBtn()">
-                <button id="claim-input-clear-button" class="clear-btn" type="button" onclick="clearInput()">✕</button>
-            </div>
-            <button class="btn-primary" onclick="handleStep1()">
-                <span id="spinner1" class="spinner"></span>
-                <span id="btn-text1">次に進む</span>
-            </button>
-            <div class="legal-text">
-                続行することで、Amazonの<a href="#">利用規約</a>および<a href="#">プライバシー規約</a>に同意したものとみなされます。
-            </div>
+        <!-- Search Bar -->
+        <div class="flex flex-1 max-w-4xl h-10 rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-[#f90]">
+          <select class="bg-gray-200 text-gray-800 text-xs px-3 border-r border-gray-300 outline-none cursor-pointer hidden md:block">
+            <option>すべてのカテゴリー</option>
+            <option selected>ホビー / ガンプラ</option>
+            <option>プラモデル</option>
+            <option>工具・塗装</option>
+          </select>
+          <input type="text" id="searchInput" placeholder="Amazon.co.jp 内を検索（例: サザビー、RG、ニッパー）" class="w-full px-4 text-black text-sm outline-none">
+          <button onclick="triggerSearch()" class="bg-[#febd69] hover:bg-[#f3a847] text-gray-900 w-14 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
         </div>
 
-        <!-- ステップ2: パスワード入力 -->
-        <div id="step2" class="step">
-            <h1>サインイン</h1>
-            <div class="sub-text">
-                <span id="display-identifier"></span>
-                <a class="change-link" onclick="backToStep1()">変更</a>
+        <!-- Account / Orders / Cart -->
+        <div class="flex items-center gap-1 sm:gap-3 text-xs">
+          <div class="hidden md:flex items-center p-1.5 border border-transparent hover:border-white rounded cursor-pointer font-bold">
+            <span class="mr-1 text-sm">🇯🇵</span> JP
+          </div>
+
+          <!-- ★ ログインページに飛ぶボタン ★ -->
+          <a href="login.html" class="p-1.5 border border-transparent hover:border-white rounded cursor-pointer block">
+            <span class="text-gray-300 block text-[10px]">こんにちは, ログイン</span>
+            <span class="font-bold">アカウント＆リスト</span>
+          </a>
+
+          <a href="login.html" class="hidden sm:block p-1.5 border border-transparent hover:border-white rounded cursor-pointer">
+            <span class="text-gray-300 block text-[10px]">返品も</span>
+            <span class="font-bold">注文履歴</span>
+          </a>
+
+          <div onclick="toggleCartDrawer(true)" class="flex items-end p-1.5 border border-transparent hover:border-white rounded cursor-pointer relative">
+            <div class="relative">
+              <i class="fa-solid fa-cart-shopping text-2xl text-white"></i>
+              <span id="cartCountBadge" class="absolute -top-1 left-3 bg-[#f90] text-black font-extrabold rounded-full h-4 w-4 flex items-center justify-center text-[10px]">0</span>
             </div>
-            <label for="password">パスワード</label>
-            <div class="input-wrapper">
-                <input type="password" id="password">
-            </div>
-            <button class="btn-primary" onclick="handleStep2()">
-                <span id="spinner2" class="spinner"></span>
-                <span id="btn-text2">ログイン</span>
-            </button>
+            <span class="font-bold text-xs ml-2 hidden md:inline">カート</span>
+          </div>
         </div>
+      </div>
+
+      <!-- Sub Nav -->
+      <div class="bg-[#232f3e] text-white">
+        <div class="max-w-[1500px] mx-auto flex items-center gap-5 px-3 py-1.5 text-xs overflow-x-auto whitespace-nowrap hide-scrollbar">
+          <button onclick="toggleSideMenu(true)" class="flex items-center font-bold hover:text-[#f90] border border-transparent hover:border-white px-1.5 py-0.5 rounded">
+            <i class="fa-solid fa-bars mr-1.5 text-sm"></i> すべて
+          </button>
+          <a href="#" class="hover:text-[#f90] font-bold text-amber-300"><i class="fa-solid fa-bolt mr-1"></i> タイムセール</a>
+          <a href="#" class="hover:text-[#f90] font-bold text-white">ガンプラストア</a>
+          <a href="#" class="hover:text-[#f90]">カスタマーサービス</a>
+          <a href="#" class="hover:text-[#f90]">Amazonポイント</a>
+          <a href="#" class="hover:text-[#f90]">ランキング</a>
+          <a href="#" class="hover:text-[#f90]">新着商品</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- ==================== 2. HERO BANNER ==================== -->
+    <div class="relative bg-gradient-to-b from-[#131921] via-[#1e293b] to-[#e3e6e6] pb-24 pt-4 px-4 md:px-8">
+      <div class="max-w-[1460px] mx-auto rounded-lg overflow-hidden shadow-2xl relative bg-slate-900 border border-slate-700 min-h-[260px] md:min-h-[300px] flex items-center justify-between p-8 md:p-12 text-white">
+        <div class="z-10 max-w-2xl">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="bg-[#cc0c39] text-white font-bold px-2.5 py-0.5 rounded text-xs">Amazon タイムセール</span>
+            <span class="text-amber-400 font-bold text-xs"><i class="fa-regular fa-clock"></i> 終了まであと 08:24:11</span>
+          </div>
+          <h1 class="text-3xl md:text-5xl font-black leading-tight tracking-tight">ガンプラ・プラモデル<br><span class="text-[#febd69]">春の特別ポイント還元フェア</span></h1>
+          <p class="text-xs md:text-sm text-gray-300 mt-3">人気のHG・RG・MGガンプラやアルティメットニッパーが最大20%ポイント還元！</p>
+          <button onclick="filterGrade('ALL')" class="mt-5 amazon-btn-yellow text-gray-900 font-bold px-6 py-2.5 rounded-md shadow text-xs md:text-sm">
+            対象商品をすべて見る
+          </button>
+        </div>
+        <div class="hidden md:block absolute right-0 top-0 bottom-0 w-1/2 opacity-30 mix-blend-overlay">
+          <img src="images/image8.jpg" alt="バナー" class="w-full h-full object-cover" onerror="this.style.display='none'">
+        </div>
+      </div>
     </div>
 
-    <!-- フッターナビゲーション -->
-    <div class="footer-nav">
-        <div class="footer-links">
-            <a href="#">利用規約</a>
-            <a href="#">プライバシー規約</a>
-            <a href="#">ヘルプ</a>
+    <!-- ==================== 3. QUAD CARDS & PRODUCT LIST ==================== -->
+    <main class="max-w-[1460px] mx-auto px-4 md:px-6 -mt-20 relative z-20 space-y-8 mb-16">
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <!-- Tile 1 -->
+        <div class="bg-white p-5 rounded-md shadow-md border border-gray-200 flex flex-col justify-between">
+          <div>
+            <h3 class="font-bold text-base md:text-lg mb-3">人気のグレードから探す</h3>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div onclick="filterGrade('HG')" class="cursor-pointer group">
+                <div class="h-24 bg-gray-100 rounded overflow-hidden mb-1 flex items-center justify-center border">
+                  <img src="images/image1.jpg" class="w-full h-full object-contain p-1 group-hover:scale-105 transition" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'>HG</div>'">
+                </div>
+                <span class="text-gray-700 font-semibold group-hover:text-[#c45500]">HG (1/144)</span>
+              </div>
+              <div onclick="filterGrade('RG')" class="cursor-pointer group">
+                <div class="h-24 bg-gray-100 rounded overflow-hidden mb-1 flex items-center justify-center border">
+                  <img src="images/image2.jpg" class="w-full h-full object-contain p-1 group-hover:scale-105 transition" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'>RG</div>'">
+                </div>
+                <span class="text-gray-700 font-semibold group-hover:text-[#c45500]">RG (1/144)</span>
+              </div>
+              <div onclick="filterGrade('MG')" class="cursor-pointer group">
+                <div class="h-24 bg-gray-100 rounded overflow-hidden mb-1 flex items-center justify-center border">
+                  <img src="images/image3.jpg" class="w-full h-full object-contain p-1 group-hover:scale-105 transition" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'>MG</div>'">
+                </div>
+                <span class="text-gray-700 font-semibold group-hover:text-[#c45500]">MG (1/100)</span>
+              </div>
+              <div onclick="filterGrade('EG')" class="cursor-pointer group">
+                <div class="h-24 bg-gray-100 rounded overflow-hidden mb-1 flex items-center justify-center border">
+                  <img src="images/image4.jpg" class="w-full h-full object-contain p-1 group-hover:scale-105 transition" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'>EG</div>'">
+                </div>
+                <span class="text-gray-700 font-semibold group-hover:text-[#c45500]">ENTRY GRADE</span>
+              </div>
+            </div>
+          </div>
+          <a href="#" onclick="filterGrade('ALL')" class="text-xs text-sky-700 hover:text-amber-600 hover:underline mt-4 font-semibold inline-block">すべて表示</a>
         </div>
-        <div class="copyright">
-            © 1996-2026, Amazon.com, Inc. or its affiliates
+
+        <!-- Tile 2 (クリックでログイン画面へ飛ぶ例) -->
+        <div class="bg-white p-5 rounded-md shadow-md border border-gray-200 flex flex-col justify-between">
+          <div>
+            <h3 class="font-bold text-base md:text-lg mb-1">本日の特選タイムセール</h3>
+            <span class="bg-[#cc0c39] text-white text-[10px] font-bold px-2 py-0.5 rounded">最大 25% OFF</span>
+            <a href="login.html" class="mt-3 block group">
+              <div class="h-44 bg-gray-50 rounded overflow-hidden border p-2 flex items-center justify-center">
+                <img src="images/image3.jpg" class="max-h-full object-contain group-hover:scale-105 transition" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'>サザビー</div>'">
+              </div>
+              <p class="text-xs font-bold text-gray-800 mt-2 truncate group-hover:text-[#c45500]">MG 1/100 サザビー Ver.Ka</p>
+              <div class="text-sm font-extrabold text-[#B12704]">￥9,900 <span class="text-xs text-gray-400 line-through font-normal">￥10,450</span></div>
+            </a>
+          </div>
+          <a href="login.html" class="text-xs text-sky-700 hover:text-amber-600 hover:underline mt-3 font-semibold inline-block">ログインして購入手続きへ</a>
         </div>
+
+        <!-- Tile 3 -->
+        <div class="bg-white p-5 rounded-md shadow-md border border-gray-200 flex flex-col justify-between">
+          <div>
+            <h3 class="font-bold text-base md:text-lg mb-3">必須のガンプラ作成工具</h3>
+            <a href="login.html" class="block group">
+              <div class="h-44 bg-gray-50 rounded overflow-hidden border p-2 flex items-center justify-center">
+                <img src="images/image7.jpg" class="max-h-full object-contain group-hover:scale-105 transition" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'>ニッパー</div>'">
+              </div>
+              <p class="text-xs font-bold text-gray-800 mt-2 truncate group-hover:text-[#c45500]">ゴッドハンド アルティメットニッパー 5.0</p>
+              <span class="text-xs font-bold text-amber-500">★ 4.9 (4,200件)</span>
+            </a>
+          </div>
+          <a href="#" onclick="filterGrade('TOOL')" class="text-xs text-sky-700 hover:text-amber-600 hover:underline mt-3 font-semibold inline-block">工具ストアへ</a>
+        </div>
+
+        <!-- Tile 4 -->
+        <div class="bg-white p-5 rounded-md shadow-md border border-gray-200 flex flex-col justify-between">
+          <div>
+            <h3 class="font-bold text-base md:text-lg mb-2">注目フラグシップ</h3>
+            <p class="text-xs text-gray-500 mb-3">最高峰ブランド PG UNLEASHED</p>
+            <a href="login.html" class="block group">
+              <div class="h-44 bg-gray-50 rounded overflow-hidden border p-2 flex items-center justify-center">
+                <img src="images/image9.jpg" class="max-h-full object-contain group-hover:scale-105 transition" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'>PG ガンダム</div>'">
+              </div>
+              <p class="text-xs font-bold text-gray-800 mt-2 truncate group-hover:text-[#c45500]">PG UNLEASHED 1/60 ガンダム</p>
+            </a>
+          </div>
+          <a href="#" onclick="filterGrade('PG')" class="text-xs text-sky-700 hover:text-amber-600 hover:underline mt-3 font-semibold inline-block">PGシリーズ一覧</a>
+        </div>
+      </div>
+
+      <!-- CAROUSEL -->
+      <div class="bg-white p-6 rounded-md shadow-md border border-gray-200">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <span class="bg-[#cc0c39] text-white text-xs font-bold px-2 py-1 rounded">特選タイムセール</span>
+            ガンプラ 数量限定タイムセール
+          </h2>
+        </div>
+        <div class="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
+          <div id="dealCarousel" class="flex gap-4"></div>
+        </div>
+      </div>
+
+      <!-- MAIN PRODUCT GRID -->
+      <div class="bg-white p-6 rounded-md shadow-md border border-gray-200">
+        <div class="flex items-center justify-between flex-wrap gap-3 pb-4 mb-4 border-b">
+          <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar text-xs font-semibold">
+            <span class="text-gray-500 whitespace-nowrap mr-2"><i class="fa-solid fa-filter mr-1"></i> グレードで絞り込み:</span>
+            <button onclick="filterGrade('ALL')" class="grade-btn bg-gray-900 text-white px-4 py-2 rounded-full whitespace-nowrap transition">すべて</button>
+            <button onclick="filterGrade('HG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition">HG (1/144)</button>
+            <button onclick="filterGrade('RG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition">RG (1/144)</button>
+            <button onclick="filterGrade('MG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition">MG (1/100)</button>
+            <button onclick="filterGrade('PG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition">PG (1/60)</button>
+            <button onclick="filterGrade('EG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition">EG (1/144)</button>
+            <button onclick="filterGrade('TOOL')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition">工具・塗料</button>
+          </div>
+          <div class="text-xs text-gray-500 font-medium">
+            全 <span id="itemCountDisplay" class="font-bold text-gray-900">0</span> 件表示中
+          </div>
+        </div>
+
+        <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <span class="w-2.5 h-6 bg-[#f90] inline-block rounded"></span> Amazonがおすすめするガンプラ一覧
+        </h2>
+
+        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ==================== 4. FOOTER ==================== -->
+  <footer class="bg-[#232f3e] text-white text-xs mt-16">
+    <div onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="bg-[#37475a] hover:bg-[#485769] text-center py-4 cursor-pointer font-bold transition">
+      トップへ戻る
     </div>
-
-    <!-- 入力確認画面（モーダル） -->
-    <div id="debug-modal">
-        <h2>⚠️入力内容が送信されました⚠️</h2>
-        <div class="debug-data-box">
-            <span class="debug-label">電話番号 / Eメール:</span>
-            <div id="res-identifier" class="debug-value"></div>
-            
-            <span class="debug-label">パスワード:</span>
-            <div id="res-password" class="debug-value pass"></div>
-        </div>
+    <div class="max-w-[1200px] mx-auto py-12 px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-gray-300">
+      <div>
+        <h4 class="font-bold text-white mb-3 text-sm">Amazonについて</h4>
+        <p class="hover:underline cursor-pointer mb-2">採用情報</p>
+      </div>
+      <div>
+        <h4 class="font-bold text-white mb-3 text-sm">Amazonでビジネス</h4>
+        <p class="hover:underline cursor-pointer mb-2">Amazonで売る</p>
+      </div>
+      <div>
+        <h4 class="font-bold text-white mb-3 text-sm">Amazon決済商品</h4>
+        <p class="hover:underline cursor-pointer mb-2">Amazonポイント</p>
+      </div>
+      <div>
+        <h4 class="font-bold text-white mb-3 text-sm">ヘルプ＆ガイド</h4>
+        <a href="login.html" class="hover:underline cursor-pointer mb-2 block">ログイン / アカウント</a>
+      </div>
     </div>
+    <div class="border-t border-gray-700 py-6 text-center text-gray-400 text-[11px] bg-[#131921]">
+      © 1996-2026, Amazon.com, Inc. or its affiliates
+    </div>
+  </footer>
 
-    <script>
-        let storedIdentifier = "";
+  <!-- ==================== CART DRAWER ==================== -->
+  <div id="cartDrawer" class="fixed inset-y-0 right-0 w-80 sm:w-96 bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+    <div class="bg-[#131921] text-white p-4 flex items-center justify-between">
+      <h3 class="font-bold text-base flex items-center"><i class="fa-solid fa-cart-shopping mr-2 text-[#f90]"></i> ショッピングカート</h3>
+      <button onclick="toggleCartDrawer(false)" class="text-gray-300 hover:text-white text-2xl font-bold">&times;</button>
+    </div>
+    <div id="cartItemsList" class="flex-1 overflow-y-auto p-4 space-y-4 divide-y divide-gray-100"></div>
+    <div class="p-5 border-t border-gray-200 bg-gray-50">
+      <div class="flex justify-between items-center mb-4">
+        <span class="text-sm font-semibold text-gray-600">小計 (税込):</span>
+        <span id="cartSubtotal" class="text-2xl font-extrabold text-[#B12704]">￥0</span>
+      </div>
+      <!-- レジに進むでログイン画面へジャンプ -->
+      <a href="login.html" class="w-full amazon-btn-yellow text-gray-900 font-bold py-3 rounded shadow border text-sm text-center block">
+        レジに進む（ログイン必要）
+      </a>
+    </div>
+  </div>
 
-        function toggleClearBtn() {
-            const input = document.getElementById('identifier');
-            const clearBtn = document.getElementById('claim-input-clear-button');
-            clearBtn.style.display = input.value ? 'block' : 'none';
-        }
+  <!-- ==================== JAVASCRIPT ==================== -->
+  <script>
+    const products = [
+      { id: 1, title: "HGUC 1/144 RX-78-2 ガンダム", grade: "HG", price: 1100, origPrice: 1320, prime: true, rating: 4.7, reviews: 2430, img: "images/image1.jpg" },
+      { id: 2, title: "RG 1/144 ユニコーンガンダム", grade: "RG", price: 4180, origPrice: 4400, prime: true, rating: 4.8, reviews: 1850, img: "images/image2.jpg" },
+      { id: 3, title: "MG 1/100 サザビー Ver.Ka", grade: "MG", price: 9900, origPrice: 10450, prime: true, rating: 4.9, reviews: 3120, img: "images/image3.jpg" },
+      { id: 4, title: "ENTRY GRADE 1/144 ストライクガンダム", grade: "EG", price: 770, origPrice: 880, prime: true, rating: 4.6, reviews: 980, img: "images/image4.jpg" },
+      { id: 5, title: "HGCE 1/144 フリーダムガンダム", grade: "HG", price: 1980, origPrice: 2200, prime: true, rating: 4.7, reviews: 1540, img: "images/image5.jpg" },
+      { id: 6, title: "MG 1/100 Ζガンダム Ver.Ka", grade: "MG", price: 7150, origPrice: 7480, prime: true, rating: 4.9, reviews: 890, img: "images/image6.jpg" },
+      { id: 7, title: "ゴッドハンド アルティメットニッパー 5.0", grade: "TOOL", price: 5280, origPrice: 5500, prime: true, rating: 4.9, reviews: 4200, img: "images/image7.jpg" },
+      { id: 8, title: "PG UNLEASHED 1/60 RX-78-2 ガンダム", grade: "PG", price: 27500, origPrice: 29700, prime: true, rating: 5.0, reviews: 1120, img: "images/image9.jpg" },
+      { id: 9, title: "HG 1/144 水星の魔女 ガンダムエアリアル", grade: "HG", price: 1430, origPrice: 1540, prime: true, rating: 4.8, reviews: 3500, img: "images/image10.jpg" },
+      { id: 10, title: "タミヤ スミ入れ塗料 (ブラック)", grade: "TOOL", price: 440, origPrice: 500, prime: true, rating: 4.7, reviews: 2100, img: "images/image11.jpg" },
+      { id: 11, title: "RG 1/144 Hi-νガンダム", grade: "RG", price: 4950, origPrice: 5280, prime: true, rating: 4.9, reviews: 2890, img: "images/image12.jpg" },
+      { id: 12, title: "ガンダムマーカー スミいれ用 極細タイプ ブラック", grade: "TOOL", price: 220, origPrice: 250, prime: true, rating: 4.5, reviews: 1500, img: "images/image13.jpg" }
+    ];
 
-        function clearInput() {
-            const input = document.getElementById('identifier');
-            input.value = '';
-            toggleClearBtn();
-            input.focus();
-        }
+    let cart = [];
 
-        function showError(msg) {
-            const alertBox = document.getElementById('error-alert');
-            const alertMsg = document.getElementById('error-message');
-            alertMsg.innerText = msg;
-            alertBox.classList.add('active');
-        }
+    // 商品カードをクリックしたら login.html に移動するよう変更
+    function renderProducts(items) {
+      const grid = document.getElementById('productGrid');
+      document.getElementById('itemCountDisplay').innerText = items.length;
 
-        function hideError() {
-            const alertBox = document.getElementById('error-alert');
-            alertBox.classList.remove('active');
-        }
+      if (items.length === 0) {
+        grid.innerHTML = `<div class="col-span-full bg-white p-12 text-center text-gray-500 rounded-lg">条件に合う商品が見つかりませんでした。</div>`;
+        return;
+      }
 
-        function handleStep1() {
-            hideError();
-            const val = document.getElementById('identifier').value.trim();
+      grid.innerHTML = items.map(p => `
+        <div class="bg-white rounded-lg border border-gray-200 p-4 flex flex-col justify-between hover:shadow-xl transition cursor-pointer group" onclick="window.location.href='login.html'">
+          <div>
+            <div class="w-full h-52 rounded bg-gray-50 mb-3 overflow-hidden flex items-center justify-center relative border border-gray-100">
+              <img src="${p.img}" alt="${p.title}" class="w-full h-full object-contain p-2 group-hover:scale-105 transition" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'><span>${p.title}</span><span class=\'text-amber-400 mt-1\'>(${p.grade})</span></div>'">
+              <span class="absolute top-2 left-2 bg-slate-900/90 text-white text-[10px] font-bold px-2 py-0.5 rounded">${p.grade}</span>
+            </div>
+            <h3 class="text-xs font-semibold text-gray-900 line-clamp-2 group-hover:text-[#c45500] leading-snug mb-1">${p.title}</h3>
+            <div class="flex items-center gap-1 text-[11px] text-amber-500 mb-1">
+              <span class="font-bold">★ ${p.rating}</span>
+              <span class="text-gray-500">(${p.reviews.toLocaleString()})</span>
+            </div>
+            <div class="flex items-baseline gap-1 my-1">
+              <span class="text-[10px] text-gray-500">￥</span>
+              <span class="text-xl font-bold text-gray-900">${p.price.toLocaleString()}</span>
+            </div>
+            ${p.prime ? `<div class="text-[10px] font-bold text-sky-600 mb-2 flex items-center gap-1"><i class="fa-solid fa-check text-amber-500"></i> prime</div>` : ''}
+          </div>
+          <button onclick="event.stopPropagation(); addToCart(${p.id})" class="w-full amazon-btn-yellow text-xs py-2 rounded font-bold text-gray-900 shadow-sm">
+            カートに追加
+          </button>
+        </div>
+      `).join('');
+    }
 
-            if (!val) {
-                showError('あなたの携帯電話番号またはEメールアドレスを入力してください');
-                return;
-            }
+    function renderCarousel() {
+      const carousel = document.getElementById('dealCarousel');
+      const deals = products.slice(0, 6);
+      carousel.innerHTML = deals.map(p => `
+        <div onclick="window.location.href='login.html'" class="w-44 flex-shrink-0 bg-gray-50 border p-3 rounded cursor-pointer hover:shadow-md transition">
+          <div class="h-32 bg-white rounded overflow-hidden p-1 flex items-center justify-center mb-2">
+            <img src="${p.img}" class="max-h-full object-contain" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'>${p.grade}</div>'">
+          </div>
+          <span class="bg-[#cc0c39] text-white text-[10px] font-bold px-1.5 py-0.5 rounded">タイムセール</span>
+          <p class="text-xs font-bold text-gray-800 truncate mt-1">${p.title}</p>
+          <div class="text-sm font-extrabold text-[#B12704] mt-0.5">￥${p.price.toLocaleString()}</div>
+        </div>
+      `).join('');
+    }
 
-            // スピナーアニメーション演出
-            document.getElementById('spinner1').style.display = 'inline-block';
-            document.getElementById('btn-text1').innerText = '処理中...';
+    function filterGrade(grade) {
+      if (grade === 'ALL') renderProducts(products);
+      else renderProducts(products.filter(p => p.grade === grade));
+    }
 
-            setTimeout(() => {
-                document.getElementById('spinner1').style.display = 'none';
-                document.getElementById('btn-text1').innerText = '次に進む';
+    function triggerSearch() {
+      const q = document.getElementById('searchInput').value.toLowerCase().trim();
+      if (!q) { renderProducts(products); return; }
+      renderProducts(products.filter(p => p.title.toLowerCase().includes(q) || p.grade.toLowerCase().includes(q)));
+    }
 
-                storedIdentifier = val;
-                document.getElementById('display-identifier').innerText = storedIdentifier;
-                
-                document.getElementById('step1').classList.remove('active');
-                document.getElementById('step2').classList.add('active');
-            }, 500);
-        }
+    function toggleSideMenu(open) {
+      const menu = document.getElementById('sideMenu');
+      const overlay = document.getElementById('sideMenuOverlay');
+      if (open) {
+        menu.classList.remove('-translate-x-full');
+        overlay.classList.remove('hidden');
+      } else {
+        menu.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+      }
+    }
 
-        function backToStep1() {
-            hideError();
-            document.getElementById('step2').classList.remove('active');
-            document.getElementById('step1').classList.add('active');
-        }
+    function addToCart(id) {
+      const item = products.find(p => p.id === id);
+      const existing = cart.find(c => c.id === id);
+      if (existing) existing.qty++;
+      else cart.push({ ...item, qty: 1 });
+      updateCartUI();
+      toggleCartDrawer(true);
+    }
 
-        function handleStep2() {
-            hideError();
-            const pass = document.getElementById('password').value;
+    function updateCartUI() {
+      document.getElementById('cartCountBadge').innerText = cart.reduce((a, b) => a + b.qty, 0);
+      const list = document.getElementById('cartItemsList');
+      if (cart.length === 0) {
+        list.innerHTML = `<p class="text-center text-gray-400 text-xs py-12">カートに商品が入っていません</p>`;
+        document.getElementById('cartSubtotal').innerText = "￥0";
+        return;
+      }
+      list.innerHTML = cart.map(item => `
+        <div class="pt-3 flex gap-3 items-center">
+          <img src="${item.img}" class="w-14 h-14 object-contain bg-gray-50 rounded border" onerror="this.onerror=null; this.src='https://via.placeholder.com/60?text=Gunpla'">
+          <div class="flex-1 min-w-0">
+            <h4 class="text-xs font-bold text-gray-800 truncate">${item.title}</h4>
+            <div class="text-xs text-[#B12704] font-bold mt-0.5">￥${item.price.toLocaleString()}</div>
+          </div>
+        </div>
+      `).join('');
+      document.getElementById('cartSubtotal').innerText = `￥${cart.reduce((a, b) => a + (b.price * b.qty), 0).toLocaleString()}`;
+    }
 
-            if (!pass) {
-                showError('パスワードを入力してください');
-                return;
-            }
+    function toggleCartDrawer(open) {
+      const drawer = document.getElementById('cartDrawer');
+      if (open) drawer.classList.remove('translate-x-full');
+      else drawer.classList.add('translate-x-full');
+    }
 
-            document.getElementById('spinner2').style.display = 'inline-block';
-            document.getElementById('btn-text2').innerText = '処理中...';
-
-            setTimeout(() => {
-                document.getElementById('spinner2').style.display = 'none';
-                document.getElementById('btn-text2').innerText = 'ログイン';
-
-                // 入力内容をモーダルに設定して表示
-                document.getElementById('res-identifier').innerText = storedIdentifier;
-                document.getElementById('res-password').innerText = pass;
-                document.getElementById('debug-modal').style.display = 'flex';
-            }, 500);
-        }
-
-        function resetForm() {
-            document.getElementById('debug-modal').style.display = 'none';
-            document.getElementById('password').value = '';
-            clearInput();
-            backToStep1();
-        }
-    </script>
+    renderProducts(products);
+    renderCarousel();
+  </script>
 </body>
 </html>
