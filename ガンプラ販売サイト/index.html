@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Amazon.co.jp | ガンプラ・プラモデル・模型ストア</title>
+  <title>Yamazon.co.jp | ガンプラ・プラモデル・模型ストア</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -64,12 +64,12 @@
   </div>
 
   <div>
-    <!-- ==================== 1. AMAZON HEADER ==================== -->
+    <!-- ==================== 1. YAMAZON HEADER ==================== -->
     <header class="bg-[#131921] text-white sticky top-0 z-40 shadow-md">
       <div class="max-w-[1500px] mx-auto flex items-center justify-between px-3 py-1.5 gap-3">
         <!-- Logo -->
         <a href="index.html" class="flex items-center p-1.5 border border-transparent hover:border-white rounded text-white font-bold text-2xl tracking-tight leading-none">
-          amazon<span class="text-[#f90] font-normal text-xs leading-none ml-0.5">.co.jp</span>
+          yamazon<span class="text-[#f90] font-normal text-xs leading-none ml-0.5">.co.jp</span>
         </a>
 
         <!-- Deliver To -->
@@ -89,8 +89,8 @@
             <option>プラモデル</option>
             <option>工具・塗装</option>
           </select>
-          <input type="text" id="searchInput" placeholder="Amazon.co.jp 内を検索（例: サザビー、RG、ニッパー）" class="w-full px-4 text-black text-sm outline-none">
-          <button onclick="triggerSearch()" class="bg-[#febd69] hover:bg-[#f3a847] text-gray-900 w-14 flex items-center justify-center text-lg">
+          <input type="text" id="searchInput" placeholder="Yamazon.co.jp 内を検索（例: サザビー、RG、ニッパー）" class="w-full px-4 text-black text-sm outline-none">
+          <button onclick="triggerSearch()" class="bg-[#febd69] hover:bg-[#f3a847] text-gray-900 w-14 flex items-center justify-center text-lg cursor-pointer">
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
         </div>
@@ -100,68 +100,61 @@
           <div class="hidden md:flex items-center p-1.5 border border-transparent hover:border-white rounded cursor-pointer font-bold">
             <span class="mr-1 text-sm">🇯🇵</span> JP
           </div>
-
-          <!-- ★ ログインページに飛ぶボタン ★ -->
           <a href="login.html" class="p-1.5 border border-transparent hover:border-white rounded cursor-pointer block">
             <span class="text-gray-300 block text-[10px]">こんにちは, ログイン</span>
             <span class="font-bold">アカウント＆リスト</span>
           </a>
-
           <a href="login.html" class="hidden sm:block p-1.5 border border-transparent hover:border-white rounded cursor-pointer">
             <span class="text-gray-300 block text-[10px]">返品も</span>
             <span class="font-bold">注文履歴</span>
           </a>
-
-          <div onclick="toggleCartDrawer(true)" class="flex items-end p-1.5 border border-transparent hover:border-white rounded cursor-pointer relative">
+          <a href="login.html" class="flex items-end p-1.5 border border-transparent hover:border-white rounded cursor-pointer relative">
             <div class="relative">
               <i class="fa-solid fa-cart-shopping text-2xl text-white"></i>
               <span id="cartCountBadge" class="absolute -top-1 left-3 bg-[#f90] text-black font-extrabold rounded-full h-4 w-4 flex items-center justify-center text-[10px]">0</span>
             </div>
             <span class="font-bold text-xs ml-2 hidden md:inline">カート</span>
-          </div>
+          </a>
         </div>
       </div>
 
-      <!-- Sub Nav -->
+      <!-- Secondary Subnav -->
       <div class="bg-[#232f3e] text-white">
         <div class="max-w-[1500px] mx-auto flex items-center gap-5 px-3 py-1.5 text-xs overflow-x-auto whitespace-nowrap hide-scrollbar">
-          <button onclick="toggleSideMenu(true)" class="flex items-center font-bold hover:text-[#f90] border border-transparent hover:border-white px-1.5 py-0.5 rounded">
+          <button onclick="toggleSideMenu(true)" class="flex items-center font-bold hover:text-[#f90] border border-transparent hover:border-white px-1.5 py-0.5 rounded cursor-pointer">
             <i class="fa-solid fa-bars mr-1.5 text-sm"></i> すべて
           </button>
-          <a href="#" class="hover:text-[#f90] font-bold text-amber-300"><i class="fa-solid fa-bolt mr-1"></i> タイムセール</a>
-          <a href="#" class="hover:text-[#f90] font-bold text-white">ガンプラストア</a>
+          <a href="login.html" class="hover:text-[#f90] font-bold text-amber-300"><i class="fa-solid fa-bolt mr-1"></i> タイムセール</a>
+          <a href="index.html" class="hover:text-[#f90] font-bold text-white">ガンプラストア</a>
           <a href="#" class="hover:text-[#f90]">カスタマーサービス</a>
-          <a href="#" class="hover:text-[#f90]">Amazonポイント</a>
+          <a href="#" class="hover:text-[#f90]">Yamazonポイント</a>
           <a href="#" class="hover:text-[#f90]">ランキング</a>
-          <a href="#" class="hover:text-[#f90]">新着商品</a>
         </div>
       </div>
     </header>
 
     <!-- ==================== 2. HERO BANNER ==================== -->
     <div class="relative bg-gradient-to-b from-[#131921] via-[#1e293b] to-[#e3e6e6] pb-24 pt-4 px-4 md:px-8">
-      <div class="max-w-[1460px] mx-auto rounded-lg overflow-hidden shadow-2xl relative bg-slate-900 border border-slate-700 min-h-[260px] md:min-h-[300px] flex items-center justify-between p-8 md:p-12 text-white">
+      <div class="max-w-[1460px] mx-auto rounded-lg overflow-hidden shadow-2xl relative bg-slate-900 border border-slate-700 min-h-[260px] md:min-h-[280px] flex items-center justify-between p-8 md:p-12 text-white">
         <div class="z-10 max-w-2xl">
           <div class="flex items-center gap-2 mb-2">
-            <span class="bg-[#cc0c39] text-white font-bold px-2.5 py-0.5 rounded text-xs">Amazon タイムセール</span>
+            <span class="bg-[#cc0c39] text-white font-bold px-2.5 py-0.5 rounded text-xs">Yamazon タイムセール</span>
             <span class="text-amber-400 font-bold text-xs"><i class="fa-regular fa-clock"></i> 終了まであと 08:24:11</span>
           </div>
-          <h1 class="text-3xl md:text-5xl font-black leading-tight tracking-tight">ガンプラ・プラモデル<br><span class="text-[#febd69]">春の特別ポイント還元フェア</span></h1>
-          <p class="text-xs md:text-sm text-gray-300 mt-3">人気のHG・RG・MGガンプラやアルティメットニッパーが最大20%ポイント還元！</p>
-          <button onclick="filterGrade('ALL')" class="mt-5 amazon-btn-yellow text-gray-900 font-bold px-6 py-2.5 rounded-md shadow text-xs md:text-sm">
+          <h1 class="text-3xl md:text-5xl font-black leading-tight tracking-tight">ガンプラ・プラモデル<br><span class="text-[#febd69]">春の超爆安還元セール</span></h1>
+          <p class="text-xs md:text-sm text-gray-300 mt-3">人気のガンプラやアルティメットニッパー全品が期間限定で激安特価！</p>
+          <button onclick="filterGrade('ALL')" class="mt-5 amazon-btn-yellow text-gray-900 font-bold px-6 py-2.5 rounded-md shadow text-xs md:text-sm cursor-pointer">
             対象商品をすべて見る
           </button>
-        </div>
-        <div class="hidden md:block absolute right-0 top-0 bottom-0 w-1/2 opacity-30 mix-blend-overlay">
-          <img src="images/image8.jpg" alt="バナー" class="w-full h-full object-cover" onerror="this.style.display='none'">
         </div>
       </div>
     </div>
 
-    <!-- ==================== 3. QUAD CARDS & PRODUCT LIST ==================== -->
+    <!-- ==================== 3. AMAZON QUAD CARDS ==================== -->
     <main class="max-w-[1460px] mx-auto px-4 md:px-6 -mt-20 relative z-20 space-y-8 mb-16">
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        
         <!-- Tile 1 -->
         <div class="bg-white p-5 rounded-md shadow-md border border-gray-200 flex flex-col justify-between">
           <div>
@@ -196,17 +189,17 @@
           <a href="#" onclick="filterGrade('ALL')" class="text-xs text-sky-700 hover:text-amber-600 hover:underline mt-4 font-semibold inline-block">すべて表示</a>
         </div>
 
-        <!-- Tile 2 (クリックでログイン画面へ飛ぶ例) -->
+        <!-- Tile 2 -->
         <div class="bg-white p-5 rounded-md shadow-md border border-gray-200 flex flex-col justify-between">
           <div>
             <h3 class="font-bold text-base md:text-lg mb-1">本日の特選タイムセール</h3>
-            <span class="bg-[#cc0c39] text-white text-[10px] font-bold px-2 py-0.5 rounded">最大 25% OFF</span>
+            <span class="bg-[#cc0c39] text-white text-[10px] font-bold px-2 py-0.5 rounded">80% OFF</span>
             <a href="login.html" class="mt-3 block group">
               <div class="h-44 bg-gray-50 rounded overflow-hidden border p-2 flex items-center justify-center">
                 <img src="images/image3.jpg" class="max-h-full object-contain group-hover:scale-105 transition" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'>サザビー</div>'">
               </div>
               <p class="text-xs font-bold text-gray-800 mt-2 truncate group-hover:text-[#c45500]">MG 1/100 サザビー Ver.Ka</p>
-              <div class="text-sm font-extrabold text-[#B12704]">￥9,900 <span class="text-xs text-gray-400 line-through font-normal">￥10,450</span></div>
+              <div class="text-sm font-extrabold text-[#B12704]">￥680 <span class="text-xs text-gray-400 line-through font-normal">￥10,450</span></div>
             </a>
           </div>
           <a href="login.html" class="text-xs text-sky-700 hover:text-amber-600 hover:underline mt-3 font-semibold inline-block">ログインして購入手続きへ</a>
@@ -241,6 +234,7 @@
           </div>
           <a href="#" onclick="filterGrade('PG')" class="text-xs text-sky-700 hover:text-amber-600 hover:underline mt-3 font-semibold inline-block">PGシリーズ一覧</a>
         </div>
+
       </div>
 
       <!-- CAROUSEL -->
@@ -261,13 +255,13 @@
         <div class="flex items-center justify-between flex-wrap gap-3 pb-4 mb-4 border-b">
           <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar text-xs font-semibold">
             <span class="text-gray-500 whitespace-nowrap mr-2"><i class="fa-solid fa-filter mr-1"></i> グレードで絞り込み:</span>
-            <button onclick="filterGrade('ALL')" class="grade-btn bg-gray-900 text-white px-4 py-2 rounded-full whitespace-nowrap transition">すべて</button>
-            <button onclick="filterGrade('HG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition">HG (1/144)</button>
-            <button onclick="filterGrade('RG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition">RG (1/144)</button>
-            <button onclick="filterGrade('MG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition">MG (1/100)</button>
-            <button onclick="filterGrade('PG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition">PG (1/60)</button>
-            <button onclick="filterGrade('EG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition">EG (1/144)</button>
-            <button onclick="filterGrade('TOOL')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition">工具・塗料</button>
+            <button onclick="filterGrade('ALL')" class="grade-btn bg-gray-900 text-white px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer">すべて</button>
+            <button onclick="filterGrade('HG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer">HG (1/144)</button>
+            <button onclick="filterGrade('RG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer">RG (1/144)</button>
+            <button onclick="filterGrade('MG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer">MG (1/100)</button>
+            <button onclick="filterGrade('PG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer">PG (1/60)</button>
+            <button onclick="filterGrade('EG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer">EG (1/144)</button>
+            <button onclick="filterGrade('TOOL')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer">工具・塗料</button>
           </div>
           <div class="text-xs text-gray-500 font-medium">
             全 <span id="itemCountDisplay" class="font-bold text-gray-900">0</span> 件表示中
@@ -275,7 +269,7 @@
         </div>
 
         <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <span class="w-2.5 h-6 bg-[#f90] inline-block rounded"></span> Amazonがおすすめするガンプラ一覧
+          <span class="w-2.5 h-6 bg-[#f90] inline-block rounded"></span> Yamazonがおすすめするガンプラ一覧
         </h2>
 
         <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
@@ -291,16 +285,16 @@
     </div>
     <div class="max-w-[1200px] mx-auto py-12 px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-gray-300">
       <div>
-        <h4 class="font-bold text-white mb-3 text-sm">Amazonについて</h4>
+        <h4 class="font-bold text-white mb-3 text-sm">Yamazonについて</h4>
         <p class="hover:underline cursor-pointer mb-2">採用情報</p>
       </div>
       <div>
-        <h4 class="font-bold text-white mb-3 text-sm">Amazonでビジネス</h4>
-        <p class="hover:underline cursor-pointer mb-2">Amazonで売る</p>
+        <h4 class="font-bold text-white mb-3 text-sm">Yamazonでビジネス</h4>
+        <p class="hover:underline cursor-pointer mb-2">Yamazonで売る</p>
       </div>
       <div>
-        <h4 class="font-bold text-white mb-3 text-sm">Amazon決済商品</h4>
-        <p class="hover:underline cursor-pointer mb-2">Amazonポイント</p>
+        <h4 class="font-bold text-white mb-3 text-sm">Yamazon決済商品</h4>
+        <p class="hover:underline cursor-pointer mb-2">Yamazonポイント</p>
       </div>
       <div>
         <h4 class="font-bold text-white mb-3 text-sm">ヘルプ＆ガイド</h4>
@@ -308,49 +302,32 @@
       </div>
     </div>
     <div class="border-t border-gray-700 py-6 text-center text-gray-400 text-[11px] bg-[#131921]">
-      © 1996-2026, Amazon.com, Inc. or its affiliates
+      © 1996-2026, Yamazon.com, Inc. or its affiliates
     </div>
   </footer>
 
-  <!-- ==================== CART DRAWER ==================== -->
-  <div id="cartDrawer" class="fixed inset-y-0 right-0 w-80 sm:w-96 bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
-    <div class="bg-[#131921] text-white p-4 flex items-center justify-between">
-      <h3 class="font-bold text-base flex items-center"><i class="fa-solid fa-cart-shopping mr-2 text-[#f90]"></i> ショッピングカート</h3>
-      <button onclick="toggleCartDrawer(false)" class="text-gray-300 hover:text-white text-2xl font-bold">&times;</button>
-    </div>
-    <div id="cartItemsList" class="flex-1 overflow-y-auto p-4 space-y-4 divide-y divide-gray-100"></div>
-    <div class="p-5 border-t border-gray-200 bg-gray-50">
-      <div class="flex justify-between items-center mb-4">
-        <span class="text-sm font-semibold text-gray-600">小計 (税込):</span>
-        <span id="cartSubtotal" class="text-2xl font-extrabold text-[#B12704]">￥0</span>
-      </div>
-      <!-- レジに進むでログイン画面へジャンプ -->
-      <a href="login.html" class="w-full amazon-btn-yellow text-gray-900 font-bold py-3 rounded shadow border text-sm text-center block">
-        レジに進む（ログイン必要）
-      </a>
-    </div>
-  </div>
-
   <!-- ==================== JAVASCRIPT ==================== -->
   <script>
+    // 激安価格設定（100円〜1,500円）
     const products = [
-      { id: 1, title: "HGUC 1/144 RX-78-2 ガンダム", grade: "HG", price: 1100, origPrice: 1320, prime: true, rating: 4.7, reviews: 2430, img: "images/image1.jpg" },
-      { id: 2, title: "RG 1/144 ユニコーンガンダム", grade: "RG", price: 4180, origPrice: 4400, prime: true, rating: 4.8, reviews: 1850, img: "images/image2.jpg" },
-      { id: 3, title: "MG 1/100 サザビー Ver.Ka", grade: "MG", price: 9900, origPrice: 10450, prime: true, rating: 4.9, reviews: 3120, img: "images/image3.jpg" },
-      { id: 4, title: "ENTRY GRADE 1/144 ストライクガンダム", grade: "EG", price: 770, origPrice: 880, prime: true, rating: 4.6, reviews: 980, img: "images/image4.jpg" },
-      { id: 5, title: "HGCE 1/144 フリーダムガンダム", grade: "HG", price: 1980, origPrice: 2200, prime: true, rating: 4.7, reviews: 1540, img: "images/image5.jpg" },
-      { id: 6, title: "MG 1/100 Ζガンダム Ver.Ka", grade: "MG", price: 7150, origPrice: 7480, prime: true, rating: 4.9, reviews: 890, img: "images/image6.jpg" },
-      { id: 7, title: "ゴッドハンド アルティメットニッパー 5.0", grade: "TOOL", price: 5280, origPrice: 5500, prime: true, rating: 4.9, reviews: 4200, img: "images/image7.jpg" },
-      { id: 8, title: "PG UNLEASHED 1/60 RX-78-2 ガンダム", grade: "PG", price: 27500, origPrice: 29700, prime: true, rating: 5.0, reviews: 1120, img: "images/image9.jpg" },
-      { id: 9, title: "HG 1/144 水星の魔女 ガンダムエアリアル", grade: "HG", price: 1430, origPrice: 1540, prime: true, rating: 4.8, reviews: 3500, img: "images/image10.jpg" },
-      { id: 10, title: "タミヤ スミ入れ塗料 (ブラック)", grade: "TOOL", price: 440, origPrice: 500, prime: true, rating: 4.7, reviews: 2100, img: "images/image11.jpg" },
-      { id: 11, title: "RG 1/144 Hi-νガンダム", grade: "RG", price: 4950, origPrice: 5280, prime: true, rating: 4.9, reviews: 2890, img: "images/image12.jpg" },
-      { id: 12, title: "ガンダムマーカー スミいれ用 極細タイプ ブラック", grade: "TOOL", price: 220, origPrice: 250, prime: true, rating: 4.5, reviews: 1500, img: "images/image13.jpg" }
+      { id: 1, title: "HGUC 1/144 RX-78-2 ガンダム", grade: "HG", price: 180, origPrice: 1320, prime: true, rating: 4.7, reviews: 2430, img: "images/image1.jpg" },
+      { id: 2, title: "RG 1/144 ユニコーンガンダム", grade: "RG", price: 480, origPrice: 4400, prime: true, rating: 4.8, reviews: 1850, img: "images/image2.jpg" },
+      { id: 3, title: "MG 1/100 サザビー Ver.Ka", grade: "MG", price: 680, origPrice: 10450, prime: true, rating: 4.9, reviews: 3120, img: "images/image3.jpg" },
+      { id: 4, title: "ENTRY GRADE 1/144 ストライクガンダム", grade: "EG", price: 100, origPrice: 880, prime: true, rating: 4.6, reviews: 980, img: "images/image4.jpg" },
+      { id: 5, title: "HGCE 1/144 フリーダムガンダム", grade: "HG", price: 250, origPrice: 2200, prime: true, rating: 4.7, reviews: 1540, img: "images/image5.jpg" },
+      { id: 6, title: "MG 1/100 Ζガンダム Ver.Ka", grade: "MG", price: 580, origPrice: 7480, prime: true, rating: 4.9, reviews: 890, img: "images/image6.jpg" },
+      { id: 7, title: "ゴッドハンド アルティメットニッパー 5.0", grade: "TOOL", price: 380, origPrice: 5500, prime: true, rating: 4.9, reviews: 4200, img: "images/image7.jpg" },
+      { id: 8, title: "PG UNLEASHED 1/60 RX-78-2 ガンダム", grade: "PG", price: 1500, origPrice: 29700, prime: true, rating: 5.0, reviews: 1120, img: "images/image9.jpg" },
+      { id: 9, title: "HG 1/144 水星の魔女 ガンダムエアリアル", grade: "HG", price: 190, origPrice: 1540, prime: true, rating: 4.8, reviews: 3500, img: "images/image10.jpg" },
+      { id: 10, title: "タミヤ スミ入れ塗料 (ブラック)", grade: "TOOL", price: 100, origPrice: 500, prime: true, rating: 4.7, reviews: 2100, img: "images/image11.jpg" },
+      { id: 11, title: "RG 1/144 Hi-νガンダム", grade: "RG", price: 520, origPrice: 5280, prime: true, rating: 4.9, reviews: 2890, img: "images/image12.jpg" },
+      { id: 12, title: "ガンダムマーカー スミいれ用 極細タイプ ブラック", grade: "TOOL", price: 100, origPrice: 250, prime: true, rating: 4.5, reviews: 1500, img: "images/image13.jpg" }
     ];
 
-    let cart = [];
+    function redirectToLogin() {
+      window.location.href = 'login.html';
+    }
 
-    // 商品カードをクリックしたら login.html に移動するよう変更
     function renderProducts(items) {
       const grid = document.getElementById('productGrid');
       document.getElementById('itemCountDisplay').innerText = items.length;
@@ -361,7 +338,7 @@
       }
 
       grid.innerHTML = items.map(p => `
-        <div class="bg-white rounded-lg border border-gray-200 p-4 flex flex-col justify-between hover:shadow-xl transition cursor-pointer group" onclick="window.location.href='login.html'">
+        <div class="bg-white rounded-lg border border-gray-200 p-4 flex flex-col justify-between hover:shadow-xl transition cursor-pointer group" onclick="redirectToLogin()">
           <div>
             <div class="w-full h-52 rounded bg-gray-50 mb-3 overflow-hidden flex items-center justify-center relative border border-gray-100">
               <img src="${p.img}" alt="${p.title}" class="w-full h-full object-contain p-2 group-hover:scale-105 transition" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'><span>${p.title}</span><span class=\'text-amber-400 mt-1\'>(${p.grade})</span></div>'">
@@ -375,10 +352,11 @@
             <div class="flex items-baseline gap-1 my-1">
               <span class="text-[10px] text-gray-500">￥</span>
               <span class="text-xl font-bold text-gray-900">${p.price.toLocaleString()}</span>
+              ${p.origPrice ? `<span class="text-[10px] text-gray-400 line-through">￥${p.origPrice.toLocaleString()}</span>` : ''}
             </div>
-            ${p.prime ? `<div class="text-[10px] font-bold text-sky-600 mb-2 flex items-center gap-1"><i class="fa-solid fa-check text-amber-500"></i> prime</div>` : ''}
+            ${p.prime ? `<div class="text-[10px] font-bold text-sky-600 mb-2 flex items-center gap-1"><i class="fa-solid fa-check text-amber-500"></i> prime <span class="text-gray-500 font-normal">翌日お届け</span></div>` : ''}
           </div>
-          <button onclick="event.stopPropagation(); addToCart(${p.id})" class="w-full amazon-btn-yellow text-xs py-2 rounded font-bold text-gray-900 shadow-sm">
+          <button onclick="event.stopPropagation(); redirectToLogin()" class="w-full amazon-btn-yellow text-xs py-2 rounded font-bold text-gray-900 shadow-sm cursor-pointer">
             カートに追加
           </button>
         </div>
@@ -389,7 +367,7 @@
       const carousel = document.getElementById('dealCarousel');
       const deals = products.slice(0, 6);
       carousel.innerHTML = deals.map(p => `
-        <div onclick="window.location.href='login.html'" class="w-44 flex-shrink-0 bg-gray-50 border p-3 rounded cursor-pointer hover:shadow-md transition">
+        <div onclick="redirectToLogin()" class="w-44 flex-shrink-0 bg-gray-50 border p-3 rounded cursor-pointer hover:shadow-md transition">
           <div class="h-32 bg-white rounded overflow-hidden p-1 flex items-center justify-center mb-2">
             <img src="${p.img}" class="max-h-full object-contain" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'>${p.grade}</div>'">
           </div>
@@ -421,41 +399,6 @@
         menu.classList.add('-translate-x-full');
         overlay.classList.add('hidden');
       }
-    }
-
-    function addToCart(id) {
-      const item = products.find(p => p.id === id);
-      const existing = cart.find(c => c.id === id);
-      if (existing) existing.qty++;
-      else cart.push({ ...item, qty: 1 });
-      updateCartUI();
-      toggleCartDrawer(true);
-    }
-
-    function updateCartUI() {
-      document.getElementById('cartCountBadge').innerText = cart.reduce((a, b) => a + b.qty, 0);
-      const list = document.getElementById('cartItemsList');
-      if (cart.length === 0) {
-        list.innerHTML = `<p class="text-center text-gray-400 text-xs py-12">カートに商品が入っていません</p>`;
-        document.getElementById('cartSubtotal').innerText = "￥0";
-        return;
-      }
-      list.innerHTML = cart.map(item => `
-        <div class="pt-3 flex gap-3 items-center">
-          <img src="${item.img}" class="w-14 h-14 object-contain bg-gray-50 rounded border" onerror="this.onerror=null; this.src='https://via.placeholder.com/60?text=Gunpla'">
-          <div class="flex-1 min-w-0">
-            <h4 class="text-xs font-bold text-gray-800 truncate">${item.title}</h4>
-            <div class="text-xs text-[#B12704] font-bold mt-0.5">￥${item.price.toLocaleString()}</div>
-          </div>
-        </div>
-      `).join('');
-      document.getElementById('cartSubtotal').innerText = `￥${cart.reduce((a, b) => a + (b.price * b.qty), 0).toLocaleString()}`;
-    }
-
-    function toggleCartDrawer(open) {
-      const drawer = document.getElementById('cartDrawer');
-      if (open) drawer.classList.remove('translate-x-full');
-      else drawer.classList.add('translate-x-full');
     }
 
     renderProducts(products);
