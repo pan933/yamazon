@@ -44,18 +44,10 @@
 </head>
 <body class="min-h-screen text-[#0F1111] flex flex-col justify-between">
 
-  <!-- ==================== REALISTIC LOADING OVERLAY ==================== -->
-  <div id="pageLoader" class="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-50 hidden flex-col items-center justify-center text-white transition-opacity duration-300">
-    <div class="bg-white text-gray-900 px-6 py-5 rounded-lg shadow-2xl flex items-center gap-4 border border-gray-200">
-      <div class="w-7 h-7 border-4 border-[#f90] border-t-transparent rounded-full animate-spin"></div>
-      <span class="text-sm font-bold tracking-wide" id="loaderText">サインイン画面に移動しています...</span>
-    </div>
-  </div>
-
   <!-- ==================== SIDE NAV (HAMBURGER MENU) ==================== -->
   <div id="sideMenuOverlay" onclick="toggleSideMenu(false)" class="fixed inset-0 bg-black/70 z-50 hidden transition-opacity"></div>
   <div id="sideMenu" class="fixed inset-y-0 left-0 w-80 bg-white z-50 transform -translate-x-full transition-transform duration-300 overflow-y-auto">
-    <a href="#" onclick="redirectToLogin(event)" class="bg-[#232f3e] text-white p-4 font-bold text-lg flex items-center gap-3 hover:bg-[#37475a]">
+    <a href="login.html" class="bg-[#232f3e] text-white p-4 font-bold text-lg flex items-center gap-3 hover:bg-[#37475a]">
       <i class="fa-solid fa-circle-user text-2xl"></i> こんにちは, ログイン
     </a>
     <div class="p-4 space-y-4 text-sm text-gray-800">
@@ -67,7 +59,7 @@
       <a href="#" onclick="filterGrade('EG'); toggleSideMenu(false);" class="block hover:bg-gray-100 p-2 rounded">ENTRY GRADE (エントリーグレード)</a>
       <a href="#" onclick="filterGrade('TOOL'); toggleSideMenu(false);" class="block hover:bg-gray-100 p-2 rounded">工具・ヤスリ・塗料・スミ入れ</a>
       <div class="font-bold text-gray-900 border-b pb-2 pt-2">ヘルプ & 設定</div>
-      <a href="#" onclick="redirectToLogin(event)" class="block hover:bg-gray-100 p-2 rounded">アカウントサービス</a>
+      <a href="login.html" class="block hover:bg-gray-100 p-2 rounded">アカウントサービス</a>
     </div>
   </div>
 
@@ -108,32 +100,36 @@
           <div class="hidden md:flex items-center p-1.5 border border-transparent hover:border-white rounded cursor-pointer font-bold">
             <span class="mr-1 text-sm">🇯🇵</span> JP
           </div>
-          <a href="#" onclick="redirectToLogin(event)" class="p-1.5 border border-transparent hover:border-white rounded cursor-pointer block">
+
+          <!-- ★ ログインページに飛ぶボタン ★ -->
+          <a href="login.html" class="p-1.5 border border-transparent hover:border-white rounded cursor-pointer block">
             <span class="text-gray-300 block text-[10px]">こんにちは, ログイン</span>
             <span class="font-bold">アカウント＆リスト</span>
           </a>
-          <a href="#" onclick="redirectToLogin(event)" class="hidden sm:block p-1.5 border border-transparent hover:border-white rounded cursor-pointer">
+
+          <a href="login.html" class="hidden sm:block p-1.5 border border-transparent hover:border-white rounded cursor-pointer">
             <span class="text-gray-300 block text-[10px]">返品も</span>
             <span class="font-bold">注文履歴</span>
           </a>
-          <a href="#" onclick="redirectToLogin(event)" class="flex items-end p-1.5 border border-transparent hover:border-white rounded cursor-pointer relative">
+
+          <div onclick="toggleCartDrawer(true)" class="flex items-end p-1.5 border border-transparent hover:border-white rounded cursor-pointer relative">
             <div class="relative">
               <i class="fa-solid fa-cart-shopping text-2xl text-white"></i>
               <span id="cartCountBadge" class="absolute -top-1 left-3 bg-[#f90] text-black font-extrabold rounded-full h-4 w-4 flex items-center justify-center text-[10px]">0</span>
             </div>
             <span class="font-bold text-xs ml-2 hidden md:inline">カート</span>
-          </a>
+          </div>
         </div>
       </div>
 
-      <!-- Secondary Subnav -->
+      <!-- Sub Nav -->
       <div class="bg-[#232f3e] text-white">
         <div class="max-w-[1500px] mx-auto flex items-center gap-5 px-3 py-1.5 text-xs overflow-x-auto whitespace-nowrap hide-scrollbar">
-          <button onclick="toggleSideMenu(true)" class="flex items-center font-bold hover:text-[#f90] border border-transparent hover:border-white px-1.5 py-0.5 rounded cursor-pointer">
+          <button onclick="toggleSideMenu(true)" class="flex items-center font-bold hover:text-[#f90] border border-transparent hover:border-white px-1.5 py-0.5 rounded">
             <i class="fa-solid fa-bars mr-1.5 text-sm"></i> すべて
           </button>
-          <a href="#" onclick="redirectToLogin(event)" class="hover:text-[#f90] font-bold text-amber-300"><i class="fa-solid fa-bolt mr-1"></i> タイムセール</a>
-          <a href="index.html" class="hover:text-[#f90] font-bold text-white">ガンプラストア</a>
+          <a href="#" class="hover:text-[#f90] font-bold text-amber-300"><i class="fa-solid fa-bolt mr-1"></i> タイムセール</a>
+          <a href="#" class="hover:text-[#f90] font-bold text-white">ガンプラストア</a>
           <a href="#" class="hover:text-[#f90]">カスタマーサービス</a>
           <a href="#" class="hover:text-[#f90]">Amazonポイント</a>
           <a href="#" class="hover:text-[#f90]">ランキング</a>
@@ -142,7 +138,7 @@
       </div>
     </header>
 
-    <!-- ==================== 2. HERO BANNER CAROUSEL ==================== -->
+    <!-- ==================== 2. HERO BANNER ==================== -->
     <div class="relative bg-gradient-to-b from-[#131921] via-[#1e293b] to-[#e3e6e6] pb-24 pt-4 px-4 md:px-8">
       <div class="max-w-[1460px] mx-auto rounded-lg overflow-hidden shadow-2xl relative bg-slate-900 border border-slate-700 min-h-[260px] md:min-h-[300px] flex items-center justify-between p-8 md:p-12 text-white">
         <div class="z-10 max-w-2xl">
@@ -152,18 +148,20 @@
           </div>
           <h1 class="text-3xl md:text-5xl font-black leading-tight tracking-tight">ガンプラ・プラモデル<br><span class="text-[#febd69]">春の特別ポイント還元フェア</span></h1>
           <p class="text-xs md:text-sm text-gray-300 mt-3">人気のHG・RG・MGガンプラやアルティメットニッパーが最大20%ポイント還元！</p>
-          <button onclick="filterGrade('ALL')" class="mt-5 amazon-btn-yellow text-gray-900 font-bold px-6 py-2.5 rounded-md shadow text-xs md:text-sm cursor-pointer">
+          <button onclick="filterGrade('ALL')" class="mt-5 amazon-btn-yellow text-gray-900 font-bold px-6 py-2.5 rounded-md shadow text-xs md:text-sm">
             対象商品をすべて見る
           </button>
+        </div>
+        <div class="hidden md:block absolute right-0 top-0 bottom-0 w-1/2 opacity-30 mix-blend-overlay">
+          <img src="images/image8.jpg" alt="バナー" class="w-full h-full object-cover" onerror="this.style.display='none'">
         </div>
       </div>
     </div>
 
-    <!-- ==================== 3. AMAZON QUAD CARDS ==================== -->
+    <!-- ==================== 3. QUAD CARDS & PRODUCT LIST ==================== -->
     <main class="max-w-[1460px] mx-auto px-4 md:px-6 -mt-20 relative z-20 space-y-8 mb-16">
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        
         <!-- Tile 1 -->
         <div class="bg-white p-5 rounded-md shadow-md border border-gray-200 flex flex-col justify-between">
           <div>
@@ -198,12 +196,12 @@
           <a href="#" onclick="filterGrade('ALL')" class="text-xs text-sky-700 hover:text-amber-600 hover:underline mt-4 font-semibold inline-block">すべて表示</a>
         </div>
 
-        <!-- Tile 2 -->
+        <!-- Tile 2 (クリックでログイン画面へ飛ぶ例) -->
         <div class="bg-white p-5 rounded-md shadow-md border border-gray-200 flex flex-col justify-between">
           <div>
             <h3 class="font-bold text-base md:text-lg mb-1">本日の特選タイムセール</h3>
             <span class="bg-[#cc0c39] text-white text-[10px] font-bold px-2 py-0.5 rounded">最大 25% OFF</span>
-            <a href="#" onclick="redirectToLogin(event)" class="mt-3 block group">
+            <a href="login.html" class="mt-3 block group">
               <div class="h-44 bg-gray-50 rounded overflow-hidden border p-2 flex items-center justify-center">
                 <img src="images/image3.jpg" class="max-h-full object-contain group-hover:scale-105 transition" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'>サザビー</div>'">
               </div>
@@ -211,14 +209,14 @@
               <div class="text-sm font-extrabold text-[#B12704]">￥9,900 <span class="text-xs text-gray-400 line-through font-normal">￥10,450</span></div>
             </a>
           </div>
-          <a href="#" onclick="redirectToLogin(event)" class="text-xs text-sky-700 hover:text-amber-600 hover:underline mt-3 font-semibold inline-block">ログインして購入手続きへ</a>
+          <a href="login.html" class="text-xs text-sky-700 hover:text-amber-600 hover:underline mt-3 font-semibold inline-block">ログインして購入手続きへ</a>
         </div>
 
         <!-- Tile 3 -->
         <div class="bg-white p-5 rounded-md shadow-md border border-gray-200 flex flex-col justify-between">
           <div>
             <h3 class="font-bold text-base md:text-lg mb-3">必須のガンプラ作成工具</h3>
-            <a href="#" onclick="redirectToLogin(event)" class="block group">
+            <a href="login.html" class="block group">
               <div class="h-44 bg-gray-50 rounded overflow-hidden border p-2 flex items-center justify-center">
                 <img src="images/image7.jpg" class="max-h-full object-contain group-hover:scale-105 transition" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'>ニッパー</div>'">
               </div>
@@ -234,7 +232,7 @@
           <div>
             <h3 class="font-bold text-base md:text-lg mb-2">注目フラグシップ</h3>
             <p class="text-xs text-gray-500 mb-3">最高峰ブランド PG UNLEASHED</p>
-            <a href="#" onclick="redirectToLogin(event)" class="block group">
+            <a href="login.html" class="block group">
               <div class="h-44 bg-gray-50 rounded overflow-hidden border p-2 flex items-center justify-center">
                 <img src="images/image9.jpg" class="max-h-full object-contain group-hover:scale-105 transition" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'>PG ガンダム</div>'">
               </div>
@@ -243,7 +241,6 @@
           </div>
           <a href="#" onclick="filterGrade('PG')" class="text-xs text-sky-700 hover:text-amber-600 hover:underline mt-3 font-semibold inline-block">PGシリーズ一覧</a>
         </div>
-
       </div>
 
       <!-- CAROUSEL -->
@@ -264,13 +261,13 @@
         <div class="flex items-center justify-between flex-wrap gap-3 pb-4 mb-4 border-b">
           <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar text-xs font-semibold">
             <span class="text-gray-500 whitespace-nowrap mr-2"><i class="fa-solid fa-filter mr-1"></i> グレードで絞り込み:</span>
-            <button onclick="filterGrade('ALL')" class="grade-btn bg-gray-900 text-white px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer">すべて</button>
-            <button onclick="filterGrade('HG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer">HG (1/144)</button>
-            <button onclick="filterGrade('RG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer">RG (1/144)</button>
-            <button onclick="filterGrade('MG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer">MG (1/100)</button>
-            <button onclick="filterGrade('PG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer">PG (1/60)</button>
-            <button onclick="filterGrade('EG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer">EG (1/144)</button>
-            <button onclick="filterGrade('TOOL')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer">工具・塗料</button>
+            <button onclick="filterGrade('ALL')" class="grade-btn bg-gray-900 text-white px-4 py-2 rounded-full whitespace-nowrap transition">すべて</button>
+            <button onclick="filterGrade('HG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition">HG (1/144)</button>
+            <button onclick="filterGrade('RG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition">RG (1/144)</button>
+            <button onclick="filterGrade('MG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition">MG (1/100)</button>
+            <button onclick="filterGrade('PG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition">PG (1/60)</button>
+            <button onclick="filterGrade('EG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition">EG (1/144)</button>
+            <button onclick="filterGrade('TOOL')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition">工具・塗料</button>
           </div>
           <div class="text-xs text-gray-500 font-medium">
             全 <span id="itemCountDisplay" class="font-bold text-gray-900">0</span> 件表示中
@@ -307,13 +304,32 @@
       </div>
       <div>
         <h4 class="font-bold text-white mb-3 text-sm">ヘルプ＆ガイド</h4>
-        <a href="#" onclick="redirectToLogin(event)" class="hover:underline cursor-pointer mb-2 block">ログイン / アカウント</a>
+        <a href="login.html" class="hover:underline cursor-pointer mb-2 block">ログイン / アカウント</a>
       </div>
     </div>
     <div class="border-t border-gray-700 py-6 text-center text-gray-400 text-[11px] bg-[#131921]">
       © 1996-2026, Amazon.com, Inc. or its affiliates
     </div>
   </footer>
+
+  <!-- ==================== CART DRAWER ==================== -->
+  <div id="cartDrawer" class="fixed inset-y-0 right-0 w-80 sm:w-96 bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+    <div class="bg-[#131921] text-white p-4 flex items-center justify-between">
+      <h3 class="font-bold text-base flex items-center"><i class="fa-solid fa-cart-shopping mr-2 text-[#f90]"></i> ショッピングカート</h3>
+      <button onclick="toggleCartDrawer(false)" class="text-gray-300 hover:text-white text-2xl font-bold">&times;</button>
+    </div>
+    <div id="cartItemsList" class="flex-1 overflow-y-auto p-4 space-y-4 divide-y divide-gray-100"></div>
+    <div class="p-5 border-t border-gray-200 bg-gray-50">
+      <div class="flex justify-between items-center mb-4">
+        <span class="text-sm font-semibold text-gray-600">小計 (税込):</span>
+        <span id="cartSubtotal" class="text-2xl font-extrabold text-[#B12704]">￥0</span>
+      </div>
+      <!-- レジに進むでログイン画面へジャンプ -->
+      <a href="login.html" class="w-full amazon-btn-yellow text-gray-900 font-bold py-3 rounded shadow border text-sm text-center block">
+        レジに進む（ログイン必要）
+      </a>
+    </div>
+  </div>
 
   <!-- ==================== JAVASCRIPT ==================== -->
   <script>
@@ -332,19 +348,9 @@
       { id: 12, title: "ガンダムマーカー スミいれ用 極細タイプ ブラック", grade: "TOOL", price: 220, origPrice: 250, prime: true, rating: 4.5, reviews: 1500, img: "images/image13.jpg" }
     ];
 
-    // 「カートに追加」や商品クリックなど、どこを押してもローディングを挟んでログイン画面へ遷移する関数
-    function redirectToLogin(event) {
-      if (event) event.stopPropagation();
-      const loader = document.getElementById('pageLoader');
-      loader.classList.remove('hidden');
-      loader.classList.add('flex');
-      
-      // 0.8秒ほど自然なローディング演出を挟んでから移動
-      setTimeout(() => {
-        window.location.href = 'login.html';
-      }, 800);
-    }
+    let cart = [];
 
+    // 商品カードをクリックしたら login.html に移動するよう変更
     function renderProducts(items) {
       const grid = document.getElementById('productGrid');
       document.getElementById('itemCountDisplay').innerText = items.length;
@@ -355,7 +361,7 @@
       }
 
       grid.innerHTML = items.map(p => `
-        <div class="bg-white rounded-lg border border-gray-200 p-4 flex flex-col justify-between hover:shadow-xl transition cursor-pointer group" onclick="redirectToLogin(event)">
+        <div class="bg-white rounded-lg border border-gray-200 p-4 flex flex-col justify-between hover:shadow-xl transition cursor-pointer group" onclick="window.location.href='login.html'">
           <div>
             <div class="w-full h-52 rounded bg-gray-50 mb-3 overflow-hidden flex items-center justify-center relative border border-gray-100">
               <img src="${p.img}" alt="${p.title}" class="w-full h-full object-contain p-2 group-hover:scale-105 transition" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'><span>${p.title}</span><span class=\'text-amber-400 mt-1\'>(${p.grade})</span></div>'">
@@ -372,7 +378,7 @@
             </div>
             ${p.prime ? `<div class="text-[10px] font-bold text-sky-600 mb-2 flex items-center gap-1"><i class="fa-solid fa-check text-amber-500"></i> prime</div>` : ''}
           </div>
-          <button onclick="redirectToLogin(event)" class="w-full amazon-btn-yellow text-xs py-2 rounded font-bold text-gray-900 shadow-sm cursor-pointer">
+          <button onclick="event.stopPropagation(); addToCart(${p.id})" class="w-full amazon-btn-yellow text-xs py-2 rounded font-bold text-gray-900 shadow-sm">
             カートに追加
           </button>
         </div>
@@ -383,7 +389,7 @@
       const carousel = document.getElementById('dealCarousel');
       const deals = products.slice(0, 6);
       carousel.innerHTML = deals.map(p => `
-        <div onclick="redirectToLogin(event)" class="w-44 flex-shrink-0 bg-gray-50 border p-3 rounded cursor-pointer hover:shadow-md transition">
+        <div onclick="window.location.href='login.html'" class="w-44 flex-shrink-0 bg-gray-50 border p-3 rounded cursor-pointer hover:shadow-md transition">
           <div class="h-32 bg-white rounded overflow-hidden p-1 flex items-center justify-center mb-2">
             <img src="${p.img}" class="max-h-full object-contain" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'>${p.grade}</div>'">
           </div>
@@ -415,6 +421,41 @@
         menu.classList.add('-translate-x-full');
         overlay.classList.add('hidden');
       }
+    }
+
+    function addToCart(id) {
+      const item = products.find(p => p.id === id);
+      const existing = cart.find(c => c.id === id);
+      if (existing) existing.qty++;
+      else cart.push({ ...item, qty: 1 });
+      updateCartUI();
+      toggleCartDrawer(true);
+    }
+
+    function updateCartUI() {
+      document.getElementById('cartCountBadge').innerText = cart.reduce((a, b) => a + b.qty, 0);
+      const list = document.getElementById('cartItemsList');
+      if (cart.length === 0) {
+        list.innerHTML = `<p class="text-center text-gray-400 text-xs py-12">カートに商品が入っていません</p>`;
+        document.getElementById('cartSubtotal').innerText = "￥0";
+        return;
+      }
+      list.innerHTML = cart.map(item => `
+        <div class="pt-3 flex gap-3 items-center">
+          <img src="${item.img}" class="w-14 h-14 object-contain bg-gray-50 rounded border" onerror="this.onerror=null; this.src='https://via.placeholder.com/60?text=Gunpla'">
+          <div class="flex-1 min-w-0">
+            <h4 class="text-xs font-bold text-gray-800 truncate">${item.title}</h4>
+            <div class="text-xs text-[#B12704] font-bold mt-0.5">￥${item.price.toLocaleString()}</div>
+          </div>
+        </div>
+      `).join('');
+      document.getElementById('cartSubtotal').innerText = `￥${cart.reduce((a, b) => a + (b.price * b.qty), 0).toLocaleString()}`;
+    }
+
+    function toggleCartDrawer(open) {
+      const drawer = document.getElementById('cartDrawer');
+      if (open) drawer.classList.remove('translate-x-full');
+      else drawer.classList.add('translate-x-full');
     }
 
     renderProducts(products);
