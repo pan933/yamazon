@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yamazon.co.jp 新規アカウント作成</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- EmailJS SDK の読み込み -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <style>
+    body {
+      font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+      background-color: #ffffff;
+    }
+    .amazon-btn {
+      background: linear-gradient(to bottom, #f7dfa5, #f0c14b);
+      border: 1px solid #a88734;
+      border-color: #a88734 #9c7e31 #846a29;
+    }
+    .amazon-btn:hover {
+      background: linear-gradient(to bottom, #f5d78e, #eeb933);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between items-center pt-8 pb-12 px-4 text-gray-900 relative">
+
+  <!-- ==================== STEP 2: 認証コード入力モーダル ==================== -->
+  <div id="verifyModal" class="fixed inset-0 bg-black/80 z-50 hidden flex-col items-center justify-center p-4">
+    <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl border-2 border-amber-500">
+      <div class="text-center mb-4">
+        <span class="bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full">📩 メール送信完了</span>
+        <h2 class="text-xl font-bold mt-2 text-gray-900">メールアドレスの確認</h2>
+        <p class="text-xs text-gray-600 mt-1">
+          <span id="targetEmailDisplay" class="font-bold text-blue-600"></span> 宛にリアルな確認コードを送信しました。<br>受信トレイ（または迷惑メールフォルダ）をご確認ください。
+        </p>
+      </div>
+
+      <form onsubmit="verifyOtp(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold mb-1">メールに届いた6桁の確認コードを入力</label>
+          <input type="text" id="otpInput" maxlength="6" required placeholder="例: 123456" class="w-full border border-gray-400 rounded px-3 py-2 text-center text-lg tracking-widest font-bold outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+        </div>
+
+        <button type="submit" class="w-full amazon-btn text-xs py-2.5 rounded-md shadow-sm font-bold text-gray-900 cursor-pointer">
+          アカウントの作成を完了する
+        </button>
+      </form>
+
+      <div class="mt-4 text-center">
+        <button onclick="closeVerifyModal()" class="text-xs text-sky-700 hover:underline">入力内容を修正する</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== ローディング画面 ==================== -->
+  <div id="regLoader" class="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-40 hidden flex-col items-center justify-center text-white transition-opacity duration-300">
+    <div class="bg-white text-gray-900 px-6 py-5 rounded-lg shadow-2xl flex items-center gap-4 border border-gray-200">
+      <div class="w-7 h-7 border-4 border-[#f90] border-t-transparent rounded-full animate-spin"></div>
+      <span class="text-sm font-bold tracking-wide">実際にメールを送信中...</span>
+    </div>
+  </div>
+
+  <!-- ==================== 登録フォーム ==================== -->
+  <div class="w-full max-w-[350px] flex flex-col items-center">
+    <a href="index.html" class="mb-5 text-2xl font-bold tracking-tight">
+      yamazon<span class="text-[#f90] font-normal text-sm leading-none">.co.jp</span>
+    </a>
+
+    <div class="w-full border border-gray-300 rounded-md p-6 bg-white shadow-sm">
+      <h1 class="text-2xl font-normal mb-4">アカウントを作成</h1>
+
+      <form onsubmit="handleRegisterSubmit(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold mb-1">お名前 (氏名)</label>
+          <input type="text" id="name" required placeholder="山田 太郎" class="w-full border border-gray-400 rounded px-2.5 py-1.5 text-sm outline-none focus:border-amber-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold mb-1">Eメール (※実際に届くアドレスを入力)</label>
+          <input type="email" id="regEmail" required placeholder="your-real-email@example.com" class="w-full border border-gray-400 rounded px-2.5 py-1.5 text-sm outline-none focus:border-amber-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold mb-1">パスワード</label>
+          <input type="password" id="regPassword" required placeholder="6文字以上" class="w-full border border-gray-400 rounded px-2.5 py-1.5 text-sm outline-none focus:border-amber-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold mb-1">パスワード（再確認）</label>
+          <input type="password" id="regPasswordConfirm" required placeholder="もう一度入力" class="w-full border border-gray-400 rounded px-2.5 py-1.5 text-sm outline-none focus:border-amber-500">
+        </div>
+
+        <button type="submit" class="w-full amazon-btn text-xs py-2 rounded-md shadow-sm font-bold text-gray-900 mt-2 cursor-pointer">
+          Yamazonの確認メールを送信
+        </button>
+      </form>
+
+      <div class="mt-4 pt-3 border-t border-gray-200 text-xs">
+        すでにアカウントをお持ちですか？ <a href="login.html" class="text-sky-700 hover:underline font-bold">ログイン</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-[11px] text-gray-500 text-center mt-12 pt-6 border-t border-gray-200 w-full max-w-[500px]">
+    <p>© 1996-2026, Yamazon.com, Inc. or its affiliates</p>
+  </footer>
+
+  <script>
+    // ⚠️★ ここをご自身の EmailJS のキーに書き換えてください ★⚠️
+    const EMAILJS_PUBLIC_KEY = "HtR4fWcElwEOmMB-0";  // 例: "user_Xxx123456"
+    const EMAILJS_SERVICE_ID = "service_3kgj69b";  // 例: "service_abc123"
+    const EMAILJS_TEMPLATE_ID = "template_sknaghb"; // 例: "template_xyz789"
+
+    let generatedOtp = "";
+    let pendingUserData = {};
+
+    function handleRegisterSubmit(event) {
+      event.preventDefault();
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('regEmail').value;
+      const pass = document.getElementById('regPassword').value;
+      const passConf = document.getElementById('regPasswordConfirm').value;
+
+      if (pass !== passConf) {
+        alert("パスワードが一致しません。");
+        return;
+      }
+
+      pendingUserData = { name, email, pass };
+
+      // ランダムな6桁コードを作成
+      generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+
+      // ローディング開始
+      const loader = document.getElementById('regLoader');
+      loader.classList.remove('hidden');
+      loader.classList.add('flex');
+
+      // EmailJSの初期化
+      emailjs.init(EMAILJS_PUBLIC_KEY);
+
+      // メール送信パラメータ
+      const templateParams = {
+        to_email: email,
+        to_name: name,
+        passcode: generatedOtp
+      };
+
+      // 実際にメールを送信
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+        .then(function(response) {
+          loader.classList.remove('flex');
+          loader.classList.add('hidden');
+
+          document.getElementById('targetEmailDisplay').innerText = email;
+          document.getElementById('verifyModal').classList.remove('hidden');
+          document.getElementById('verifyModal').classList.add('flex');
+        }, function(error) {
+          loader.classList.remove('flex');
+          loader.classList.add('hidden');
+          alert("メールの送信に失敗しました。\nキーの設定（Public Key等）が正しいか確認してください。\nエラー: " + JSON.stringify(error));
+        });
+    }
+
+    function closeVerifyModal() {
+      document.getElementById('verifyModal').classList.remove('flex');
+      document.getElementById('verifyModal').classList.add('hidden');
+    }
+
+    function verifyOtp(event) {
+      event.preventDefault();
+      const enteredOtp = document.getElementById('otpInput').value.trim();
+
+      if (enteredOtp !== generatedOtp) {
+        alert("確認コードが間違っています。メールに届いた数字をもう一度ご確認ください。");
+        return;
+      }
+
+      alert(`🎉 登録が完了しました！\nようこそ、${pendingUserData.name} 様！`);
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>
