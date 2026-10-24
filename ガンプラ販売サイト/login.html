@@ -24,13 +24,13 @@
 
   <!-- ==================== DEMO RESULT DISPLAY (入力情報をでっかく表示) ==================== -->
   <div id="demoResultModal" class="fixed inset-0 bg-black/80 z-50 hidden flex-col items-center justify-center p-4">
-    <div class="bg-white rounded-xl max-w-lg w-full p-6 text-center shadow-2xl border-4 border-red-500 animate-bounce-once">
-      <div class="text-red-600 text-4xl mb-2 font-black">⚠️ DEMO LOG ⚠️</div>
-      <p class="text-gray-700 font-bold mb-4 text-sm">【デモ画面】入力された情報が以下のように取得されました</p>
+    <div class="bg-white rounded-xl max-w-lg w-full p-6 text-center shadow-2xl border-4 border-green-500">
+      <div class="text-green-600 text-3xl mb-2 font-black">🎉 ログイン成功！</div>
+      <p class="text-gray-700 font-bold mb-4 text-sm">【デモ確認】登録済みのユーザーとして認証されました</p>
       
       <div class="bg-gray-100 p-4 rounded-lg border text-left space-y-3 mb-6">
         <div>
-          <span class="text-xs text-gray-500 font-bold block">入力されたID / メールアドレス:</span>
+          <span class="text-xs text-gray-500 font-bold block">ログインID (メールアドレス):</span>
           <span id="displayEmail" class="text-xl font-extrabold text-blue-600 break-all">---</span>
         </div>
         <div class="border-t pt-2">
@@ -39,8 +39,8 @@
         </div>
       </div>
 
-      <button onclick="finishDemo()" class="w-full bg-red-600 hover:bg-red-700 text-white font-black py-3 rounded-lg text-base shadow cursor-pointer transition">
-        理解しました（トップページへ戻る）
+      <button onclick="finishDemo()" class="w-full amazon-btn font-black py-3 rounded-lg text-base shadow cursor-pointer transition">
+        トップページへ移動する
       </button>
     </div>
   </div>
@@ -49,15 +49,20 @@
   <div id="loginLoader" class="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-40 hidden flex-col items-center justify-center text-white transition-opacity duration-300">
     <div class="bg-white text-gray-900 px-6 py-5 rounded-lg shadow-2xl flex items-center gap-4 border border-gray-200">
       <div class="w-7 h-7 border-4 border-[#f90] border-t-transparent rounded-full animate-spin"></div>
-      <span class="text-sm font-bold tracking-wide">サインインしています...</span>
+      <span id="loaderText" class="text-sm font-bold tracking-wide">登録情報を照合しています...</span>
     </div>
   </div>
 
   <div class="w-full max-w-[350px] flex flex-col items-center">
-    <!-- Yamazon Logo (クリックでトップページへ戻る) -->
+    <!-- Yamazon Logo -->
     <a href="index.html" class="mb-5 text-2xl font-bold tracking-tight">
       yamazon<span class="text-[#f90] font-normal text-sm leading-none">.co.jp</span>
     </a>
+
+    <!-- エラーメッセージ通知エリア -->
+    <div id="errorMessage" class="w-full mb-4 bg-red-50 border border-red-400 text-red-700 p-3 rounded text-xs hidden">
+      <p id="errorText" class="font-bold"></p>
+    </div>
 
     <!-- Login Box -->
     <div class="w-full border border-gray-300 rounded-md p-6 bg-white shadow-sm">
@@ -99,9 +104,9 @@
         <span class="flex-shrink mx-2 text-xs text-gray-500">Yamazonの新しいお客様ですか？</span>
         <div class="flex-grow border-t border-gray-300"></div>
       </div>
-      <button onclick="alert('デモアカウント登録画面です');" class="w-full border border-gray-400 bg-gray-50 hover:bg-gray-100 text-xs py-2 rounded-md mt-2 shadow-sm font-medium cursor-pointer">
+      <a href="register.html" class="block w-full border border-gray-400 bg-gray-50 hover:bg-gray-100 text-xs py-2 rounded-md mt-2 shadow-sm font-medium cursor-pointer text-center text-gray-900 no-underline">
         Yamazonアカウントを作成
-      </button>
+      </a>
     </div>
   </div>
 
@@ -118,18 +123,39 @@
   <script>
     function handleLogin(event) {
       event.preventDefault();
-      const emailVal = document.getElementById('email').value;
+      const emailVal = document.getElementById('email').value.trim();
       const passVal = document.getElementById('password').value;
 
       const loader = document.getElementById('loginLoader');
+      const errorBox = document.getElementById('errorMessage');
+      const errorText = document.getElementById('errorText');
+
+      errorBox.classList.add('hidden');
       loader.classList.remove('hidden');
       loader.classList.add('flex');
 
-      // 1秒ローディングのあと、でっかく表示するモーダルを出す
+      // localStorage から登録済みユーザー情報を取得
+      const savedUserDataStr = localStorage.getItem('yamazon_registered_user');
+
       setTimeout(() => {
         loader.classList.remove('flex');
         loader.classList.add('hidden');
 
+        // アカウント登録が一度も行われていない場合
+        if (!savedUserDataStr) {
+          showErrorAndRedirect("アカウントが見つかりません。ログインするには先に新規登録をしてください。");
+          return;
+        }
+
+        const savedUser = JSON.parse(savedUserDataStr);
+
+        // メールアドレスまたはパスワードが不一致の場合
+        if (savedUser.email !== emailVal || savedUser.pass !== passVal) {
+          showErrorAndRedirect("登録情報と一致しません。正しく登録されたアカウントでログインするか、新規登録を行ってください。");
+          return;
+        }
+
+        // ログイン成功時
         document.getElementById('displayEmail').innerText = emailVal;
         document.getElementById('displayPassword').innerText = passVal;
 
@@ -137,6 +163,19 @@
         modal.classList.remove('hidden');
         modal.classList.add('flex');
       }, 1000);
+    }
+
+    function showErrorAndRedirect(message) {
+      const errorBox = document.getElementById('errorMessage');
+      const errorText = document.getElementById('errorText');
+
+      errorText.innerText = message + "（3秒後に登録画面へ移動します）";
+      errorBox.classList.remove('hidden');
+
+      // 3秒後に自動で新規登録画面へリダイレクト
+      setTimeout(() => {
+        window.location.href = 'register.html';
+      }, 3000);
     }
 
     function finishDemo() {
