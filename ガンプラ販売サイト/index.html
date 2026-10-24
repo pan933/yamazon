@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Yamazon.co.jp | ガンプラ・プラモデル・模型ストア</title>
+  <title>Yamazon.co.jp | ガンプラ・HHKB・書籍・コーヒー焙煎ストア</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -44,22 +44,30 @@
 </head>
 <body class="min-h-screen text-[#0F1111] flex flex-col justify-between">
 
+  <!-- ==================== REALISTIC LOADING OVERLAY ==================== -->
+  <div id="pageLoader" class="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-50 hidden flex-col items-center justify-center text-white transition-opacity duration-300">
+    <div class="bg-white text-gray-900 px-6 py-5 rounded-lg shadow-2xl flex items-center gap-4 border border-gray-200">
+      <div class="w-7 h-7 border-4 border-[#f90] border-t-transparent rounded-full animate-spin"></div>
+      <span class="text-sm font-bold tracking-wide" id="loaderText">サインイン画面に移動しています...</span>
+    </div>
+  </div>
+
   <!-- ==================== SIDE NAV (HAMBURGER MENU) ==================== -->
   <div id="sideMenuOverlay" onclick="toggleSideMenu(false)" class="fixed inset-0 bg-black/70 z-50 hidden transition-opacity"></div>
   <div id="sideMenu" class="fixed inset-y-0 left-0 w-80 bg-white z-50 transform -translate-x-full transition-transform duration-300 overflow-y-auto">
-    <a href="login.html" class="bg-[#232f3e] text-white p-4 font-bold text-lg flex items-center gap-3 hover:bg-[#37475a]">
+    <a href="#" onclick="redirectToLogin(event)" class="bg-[#232f3e] text-white p-4 font-bold text-lg flex items-center gap-3 hover:bg-[#37475a]">
       <i class="fa-solid fa-circle-user text-2xl"></i> こんにちは, ログイン
     </a>
     <div class="p-4 space-y-4 text-sm text-gray-800">
-      <div class="font-bold text-gray-900 border-b pb-2">ガンプラストア カテゴリー</div>
-      <a href="#" onclick="filterGrade('HG'); toggleSideMenu(false);" class="block hover:bg-gray-100 p-2 rounded">HG (ハイグレード) 1/144</a>
-      <a href="#" onclick="filterGrade('RG'); toggleSideMenu(false);" class="block hover:bg-gray-100 p-2 rounded">RG (リアルグレード) 1/144</a>
-      <a href="#" onclick="filterGrade('MG'); toggleSideMenu(false);" class="block hover:bg-gray-100 p-2 rounded">MG (マスターグレード) 1/100</a>
-      <a href="#" onclick="filterGrade('PG'); toggleSideMenu(false);" class="block hover:bg-gray-100 p-2 rounded">PG (パーフェクトグレード) 1/60</a>
-      <a href="#" onclick="filterGrade('EG'); toggleSideMenu(false);" class="block hover:bg-gray-100 p-2 rounded">ENTRY GRADE (エントリーグレード)</a>
-      <a href="#" onclick="filterGrade('TOOL'); toggleSideMenu(false);" class="block hover:bg-gray-100 p-2 rounded">工具・ヤスリ・塗料・スミ入れ</a>
+      <div class="font-bold text-gray-900 border-b pb-2">ストア カテゴリー選択</div>
+      <button onclick="switchCategory('gunpla'); toggleSideMenu(false);" class="w-full text-left font-bold text-amber-600 hover:bg-gray-100 p-2 rounded">🤖 ガンプラストア</button>
+      <button onclick="switchCategory('keyboard'); toggleSideMenu(false);" class="w-full text-left font-bold text-sky-600 hover:bg-gray-100 p-2 rounded">⌨️ HHKB・キーボードストア</button>
+      <button onclick="switchCategory('books'); toggleSideMenu(false);" class="w-full text-left font-bold text-purple-600 hover:bg-gray-100 p-2 rounded">📚 学校DX・情報整理 書籍ストア</button>
+      <button onclick="switchCategory('coffee'); toggleSideMenu(false);" class="w-full text-left font-bold text-orange-700 hover:bg-gray-100 p-2 rounded">☕ コーヒー焙煎・生豆ストア</button>
+
       <div class="font-bold text-gray-900 border-b pb-2 pt-2">ヘルプ & 設定</div>
-      <a href="login.html" class="block hover:bg-gray-100 p-2 rounded">アカウントサービス</a>
+      <a href="#" onclick="redirectToLogin(event)" class="block hover:bg-gray-100 p-2 rounded">アカウントサービス</a>
+      <a href="#" onclick="redirectToLogin(event)" class="block hover:bg-gray-100 p-2 rounded">注文履歴</a>
     </div>
   </div>
 
@@ -83,13 +91,13 @@
 
         <!-- Search Bar -->
         <div class="flex flex-1 max-w-4xl h-10 rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-[#f90]">
-          <select class="bg-gray-200 text-gray-800 text-xs px-3 border-r border-gray-300 outline-none cursor-pointer hidden md:block">
-            <option>すべてのカテゴリー</option>
-            <option selected>ホビー / ガンプラ</option>
-            <option>プラモデル</option>
-            <option>工具・塗装</option>
+          <select id="searchCategorySelect" class="bg-gray-200 text-gray-800 text-xs px-3 border-r border-gray-300 outline-none cursor-pointer hidden md:block" onchange="onCategorySelectChange(this.value)">
+            <option value="gunpla">ガンプラ</option>
+            <option value="keyboard">HHKB・キーボード</option>
+            <option value="books">学校DX・情報整理書籍</option>
+            <option value="coffee">コーヒー焙煎</option>
           </select>
-          <input type="text" id="searchInput" placeholder="Yamazon.co.jp 内を検索（例: サザビー、RG、ニッパー）" class="w-full px-4 text-black text-sm outline-none">
+          <input type="text" id="searchInput" placeholder="Yamazon.co.jp 内を検索（例: 学校DX、HHKB、サザビー）" class="w-full px-4 text-black text-sm outline-none">
           <button onclick="triggerSearch()" class="bg-[#febd69] hover:bg-[#f3a847] text-gray-900 w-14 flex items-center justify-center text-lg cursor-pointer">
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
@@ -100,15 +108,15 @@
           <div class="hidden md:flex items-center p-1.5 border border-transparent hover:border-white rounded cursor-pointer font-bold">
             <span class="mr-1 text-sm">🇯🇵</span> JP
           </div>
-          <a href="login.html" class="p-1.5 border border-transparent hover:border-white rounded cursor-pointer block">
+          <a href="#" onclick="redirectToLogin(event)" class="p-1.5 border border-transparent hover:border-white rounded cursor-pointer block">
             <span class="text-gray-300 block text-[10px]">こんにちは, ログイン</span>
             <span class="font-bold">アカウント＆リスト</span>
           </a>
-          <a href="login.html" class="hidden sm:block p-1.5 border border-transparent hover:border-white rounded cursor-pointer">
+          <a href="#" onclick="redirectToLogin(event)" class="hidden sm:block p-1.5 border border-transparent hover:border-white rounded cursor-pointer">
             <span class="text-gray-300 block text-[10px]">返品も</span>
             <span class="font-bold">注文履歴</span>
           </a>
-          <a href="login.html" class="flex items-end p-1.5 border border-transparent hover:border-white rounded cursor-pointer relative">
+          <a href="#" onclick="redirectToLogin(event)" class="flex items-end p-1.5 border border-transparent hover:border-white rounded cursor-pointer relative">
             <div class="relative">
               <i class="fa-solid fa-cart-shopping text-2xl text-white"></i>
               <span id="cartCountBadge" class="absolute -top-1 left-3 bg-[#f90] text-black font-extrabold rounded-full h-4 w-4 flex items-center justify-center text-[10px]">0</span>
@@ -120,15 +128,20 @@
 
       <!-- Secondary Subnav -->
       <div class="bg-[#232f3e] text-white">
-        <div class="max-w-[1500px] mx-auto flex items-center gap-5 px-3 py-1.5 text-xs overflow-x-auto whitespace-nowrap hide-scrollbar">
+        <div class="max-w-[1500px] mx-auto flex items-center gap-4 px-3 py-1.5 text-xs overflow-x-auto whitespace-nowrap hide-scrollbar">
           <button onclick="toggleSideMenu(true)" class="flex items-center font-bold hover:text-[#f90] border border-transparent hover:border-white px-1.5 py-0.5 rounded cursor-pointer">
             <i class="fa-solid fa-bars mr-1.5 text-sm"></i> すべて
           </button>
-          <a href="login.html" class="hover:text-[#f90] font-bold text-amber-300"><i class="fa-solid fa-bolt mr-1"></i> タイムセール</a>
-          <a href="index.html" class="hover:text-[#f90] font-bold text-white">ガンプラストア</a>
+          <a href="#" onclick="redirectToLogin(event)" class="hover:text-[#f90] font-bold text-amber-300"><i class="fa-solid fa-bolt mr-1"></i> タイムセール</a>
+          
+          <!-- Category Tabs -->
+          <button id="navGunplaBtn" onclick="switchCategory('gunpla')" class="font-bold border-b-2 border-amber-400 text-amber-300 px-2 py-0.5 cursor-pointer">🤖 ガンプラ</button>
+          <button id="navKeyboardBtn" onclick="switchCategory('keyboard')" class="font-bold text-gray-300 hover:text-white px-2 py-0.5 cursor-pointer">⌨️ HHKB・キーボード</button>
+          <button id="navBooksBtn" onclick="switchCategory('books')" class="font-bold text-gray-300 hover:text-white px-2 py-0.5 cursor-pointer">📚 学校DX・情報整理書籍</button>
+          <button id="navCoffeeBtn" onclick="switchCategory('coffee')" class="font-bold text-gray-300 hover:text-white px-2 py-0.5 cursor-pointer">☕ コーヒー焙煎</button>
+
           <a href="#" class="hover:text-[#f90]">カスタマーサービス</a>
           <a href="#" class="hover:text-[#f90]">Yamazonポイント</a>
-          <a href="#" class="hover:text-[#f90]">ランキング</a>
         </div>
       </div>
     </header>
@@ -141,8 +154,12 @@
             <span class="bg-[#cc0c39] text-white font-bold px-2.5 py-0.5 rounded text-xs">Yamazon タイムセール</span>
             <span class="text-amber-400 font-bold text-xs"><i class="fa-regular fa-clock"></i> 終了まであと 08:24:11</span>
           </div>
-          <h1 class="text-3xl md:text-5xl font-black leading-tight tracking-tight">ガンプラ・プラモデル<br><span class="text-[#febd69]">春の超爆安還元セール</span></h1>
-          <p class="text-xs md:text-sm text-gray-300 mt-3">人気のガンプラやアルティメットニッパー全品が期間限定で激安特価！</p>
+          <h1 id="heroTitle" class="text-3xl md:text-5xl font-black leading-tight tracking-tight">
+            ガンプラ・プラモデル<br><span class="text-[#febd69]">春の特別ポイント還元フェア</span>
+          </h1>
+          <p id="heroDesc" class="text-xs md:text-sm text-gray-300 mt-3">
+            人気のHG・RG・MGガンプラやアルティメットニッパーが最大20%ポイント還元！
+          </p>
           <button onclick="filterGrade('ALL')" class="mt-5 amazon-btn-yellow text-gray-900 font-bold px-6 py-2.5 rounded-md shadow text-xs md:text-sm cursor-pointer">
             対象商品をすべて見る
           </button>
@@ -150,99 +167,15 @@
       </div>
     </div>
 
-    <!-- ==================== 3. AMAZON QUAD CARDS ==================== -->
+    <!-- ==================== 3. MAIN PRODUCT GRID ==================== -->
     <main class="max-w-[1460px] mx-auto px-4 md:px-6 -mt-20 relative z-20 space-y-8 mb-16">
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        
-        <!-- Tile 1 -->
-        <div class="bg-white p-5 rounded-md shadow-md border border-gray-200 flex flex-col justify-between">
-          <div>
-            <h3 class="font-bold text-base md:text-lg mb-3">人気のグレードから探す</h3>
-            <div class="grid grid-cols-2 gap-2 text-xs">
-              <div onclick="filterGrade('HG')" class="cursor-pointer group">
-                <div class="h-24 bg-gray-100 rounded overflow-hidden mb-1 flex items-center justify-center border">
-                  <img src="images/image1.jpg" class="w-full h-full object-contain p-1 group-hover:scale-105 transition" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'>HG</div>'">
-                </div>
-                <span class="text-gray-700 font-semibold group-hover:text-[#c45500]">HG (1/144)</span>
-              </div>
-              <div onclick="filterGrade('RG')" class="cursor-pointer group">
-                <div class="h-24 bg-gray-100 rounded overflow-hidden mb-1 flex items-center justify-center border">
-                  <img src="images/image2.jpg" class="w-full h-full object-contain p-1 group-hover:scale-105 transition" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'>RG</div>'">
-                </div>
-                <span class="text-gray-700 font-semibold group-hover:text-[#c45500]">RG (1/144)</span>
-              </div>
-              <div onclick="filterGrade('MG')" class="cursor-pointer group">
-                <div class="h-24 bg-gray-100 rounded overflow-hidden mb-1 flex items-center justify-center border">
-                  <img src="images/image3.jpg" class="w-full h-full object-contain p-1 group-hover:scale-105 transition" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'>MG</div>'">
-                </div>
-                <span class="text-gray-700 font-semibold group-hover:text-[#c45500]">MG (1/100)</span>
-              </div>
-              <div onclick="filterGrade('EG')" class="cursor-pointer group">
-                <div class="h-24 bg-gray-100 rounded overflow-hidden mb-1 flex items-center justify-center border">
-                  <img src="images/image4.jpg" class="w-full h-full object-contain p-1 group-hover:scale-105 transition" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'>EG</div>'">
-                </div>
-                <span class="text-gray-700 font-semibold group-hover:text-[#c45500]">ENTRY GRADE</span>
-              </div>
-            </div>
-          </div>
-          <a href="#" onclick="filterGrade('ALL')" class="text-xs text-sky-700 hover:text-amber-600 hover:underline mt-4 font-semibold inline-block">すべて表示</a>
-        </div>
-
-        <!-- Tile 2 -->
-        <div class="bg-white p-5 rounded-md shadow-md border border-gray-200 flex flex-col justify-between">
-          <div>
-            <h3 class="font-bold text-base md:text-lg mb-1">本日の特選タイムセール</h3>
-            <span class="bg-[#cc0c39] text-white text-[10px] font-bold px-2 py-0.5 rounded">80% OFF</span>
-            <a href="login.html" class="mt-3 block group">
-              <div class="h-44 bg-gray-50 rounded overflow-hidden border p-2 flex items-center justify-center">
-                <img src="images/image3.jpg" class="max-h-full object-contain group-hover:scale-105 transition" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'>サザビー</div>'">
-              </div>
-              <p class="text-xs font-bold text-gray-800 mt-2 truncate group-hover:text-[#c45500]">MG 1/100 サザビー Ver.Ka</p>
-              <div class="text-sm font-extrabold text-[#B12704]">￥680 <span class="text-xs text-gray-400 line-through font-normal">￥10,450</span></div>
-            </a>
-          </div>
-          <a href="login.html" class="text-xs text-sky-700 hover:text-amber-600 hover:underline mt-3 font-semibold inline-block">ログインして購入手続きへ</a>
-        </div>
-
-        <!-- Tile 3 -->
-        <div class="bg-white p-5 rounded-md shadow-md border border-gray-200 flex flex-col justify-between">
-          <div>
-            <h3 class="font-bold text-base md:text-lg mb-3">必須のガンプラ作成工具</h3>
-            <a href="login.html" class="block group">
-              <div class="h-44 bg-gray-50 rounded overflow-hidden border p-2 flex items-center justify-center">
-                <img src="images/image7.jpg" class="max-h-full object-contain group-hover:scale-105 transition" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'>ニッパー</div>'">
-              </div>
-              <p class="text-xs font-bold text-gray-800 mt-2 truncate group-hover:text-[#c45500]">ゴッドハンド アルティメットニッパー 5.0</p>
-              <span class="text-xs font-bold text-amber-500">★ 4.9 (4,200件)</span>
-            </a>
-          </div>
-          <a href="#" onclick="filterGrade('TOOL')" class="text-xs text-sky-700 hover:text-amber-600 hover:underline mt-3 font-semibold inline-block">工具ストアへ</a>
-        </div>
-
-        <!-- Tile 4 -->
-        <div class="bg-white p-5 rounded-md shadow-md border border-gray-200 flex flex-col justify-between">
-          <div>
-            <h3 class="font-bold text-base md:text-lg mb-2">注目フラグシップ</h3>
-            <p class="text-xs text-gray-500 mb-3">最高峰ブランド PG UNLEASHED</p>
-            <a href="login.html" class="block group">
-              <div class="h-44 bg-gray-50 rounded overflow-hidden border p-2 flex items-center justify-center">
-                <img src="images/image9.jpg" class="max-h-full object-contain group-hover:scale-105 transition" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'>PG ガンダム</div>'">
-              </div>
-              <p class="text-xs font-bold text-gray-800 mt-2 truncate group-hover:text-[#c45500]">PG UNLEASHED 1/60 ガンダム</p>
-            </a>
-          </div>
-          <a href="#" onclick="filterGrade('PG')" class="text-xs text-sky-700 hover:text-amber-600 hover:underline mt-3 font-semibold inline-block">PGシリーズ一覧</a>
-        </div>
-
-      </div>
 
       <!-- CAROUSEL -->
       <div class="bg-white p-6 rounded-md shadow-md border border-gray-200">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
             <span class="bg-[#cc0c39] text-white text-xs font-bold px-2 py-1 rounded">特選タイムセール</span>
-            ガンプラ 数量限定タイムセール
+            <span id="carouselSectionTitle">ガンプラ 数量限定タイムセール</span>
           </h2>
         </div>
         <div class="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
@@ -250,26 +183,17 @@
         </div>
       </div>
 
-      <!-- MAIN PRODUCT GRID -->
+      <!-- PRODUCT GRID -->
       <div class="bg-white p-6 rounded-md shadow-md border border-gray-200">
         <div class="flex items-center justify-between flex-wrap gap-3 pb-4 mb-4 border-b">
-          <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar text-xs font-semibold">
-            <span class="text-gray-500 whitespace-nowrap mr-2"><i class="fa-solid fa-filter mr-1"></i> グレードで絞り込み:</span>
-            <button onclick="filterGrade('ALL')" class="grade-btn bg-gray-900 text-white px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer">すべて</button>
-            <button onclick="filterGrade('HG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer">HG (1/144)</button>
-            <button onclick="filterGrade('RG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer">RG (1/144)</button>
-            <button onclick="filterGrade('MG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer">MG (1/100)</button>
-            <button onclick="filterGrade('PG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer">PG (1/60)</button>
-            <button onclick="filterGrade('EG')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer">EG (1/144)</button>
-            <button onclick="filterGrade('TOOL')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer">工具・塗料</button>
-          </div>
+          <div id="filterButtonsContainer" class="flex items-center gap-2 overflow-x-auto hide-scrollbar text-xs font-semibold"></div>
           <div class="text-xs text-gray-500 font-medium">
             全 <span id="itemCountDisplay" class="font-bold text-gray-900">0</span> 件表示中
           </div>
         </div>
 
-        <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <span class="w-2.5 h-6 bg-[#f90] inline-block rounded"></span> Yamazonがおすすめするガンプラ一覧
+        <h2 id="gridSectionTitle" class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <span class="w-2.5 h-6 bg-[#f90] inline-block rounded"></span> Yamazonがおすすめするアイテム一覧
         </h2>
 
         <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
@@ -278,7 +202,7 @@
     </main>
   </div>
 
-  <!-- ==================== 4. FOOTER ==================== -->
+  <!-- ==================== FOOTER ==================== -->
   <footer class="bg-[#232f3e] text-white text-xs mt-16">
     <div onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="bg-[#37475a] hover:bg-[#485769] text-center py-4 cursor-pointer font-bold transition">
       トップへ戻る
@@ -298,7 +222,7 @@
       </div>
       <div>
         <h4 class="font-bold text-white mb-3 text-sm">ヘルプ＆ガイド</h4>
-        <a href="login.html" class="hover:underline cursor-pointer mb-2 block">ログイン / アカウント</a>
+        <a href="#" onclick="redirectToLogin(event)" class="hover:underline cursor-pointer mb-2 block">ログイン / アカウント</a>
       </div>
     </div>
     <div class="border-t border-gray-700 py-6 text-center text-gray-400 text-[11px] bg-[#131921]">
@@ -308,24 +232,144 @@
 
   <!-- ==================== JAVASCRIPT ==================== -->
   <script>
-    // 激安価格設定（100円〜1,500円）
-    const products = [
-      { id: 1, title: "HGUC 1/144 RX-78-2 ガンダム", grade: "HG", price: 180, origPrice: 1320, prime: true, rating: 4.7, reviews: 2430, img: "images/image1.jpg" },
-      { id: 2, title: "RG 1/144 ユニコーンガンダム", grade: "RG", price: 480, origPrice: 4400, prime: true, rating: 4.8, reviews: 1850, img: "images/image2.jpg" },
-      { id: 3, title: "MG 1/100 サザビー Ver.Ka", grade: "MG", price: 680, origPrice: 10450, prime: true, rating: 4.9, reviews: 3120, img: "images/image3.jpg" },
-      { id: 4, title: "ENTRY GRADE 1/144 ストライクガンダム", grade: "EG", price: 100, origPrice: 880, prime: true, rating: 4.6, reviews: 980, img: "images/image4.jpg" },
-      { id: 5, title: "HGCE 1/144 フリーダムガンダム", grade: "HG", price: 250, origPrice: 2200, prime: true, rating: 4.7, reviews: 1540, img: "images/image5.jpg" },
-      { id: 6, title: "MG 1/100 Ζガンダム Ver.Ka", grade: "MG", price: 580, origPrice: 7480, prime: true, rating: 4.9, reviews: 890, img: "images/image6.jpg" },
-      { id: 7, title: "ゴッドハンド アルティメットニッパー 5.0", grade: "TOOL", price: 380, origPrice: 5500, prime: true, rating: 4.9, reviews: 4200, img: "images/image7.jpg" },
-      { id: 8, title: "PG UNLEASHED 1/60 RX-78-2 ガンダム", grade: "PG", price: 1500, origPrice: 29700, prime: true, rating: 5.0, reviews: 1120, img: "images/image9.jpg" },
-      { id: 9, title: "HG 1/144 水星の魔女 ガンダムエアリアル", grade: "HG", price: 190, origPrice: 1540, prime: true, rating: 4.8, reviews: 3500, img: "images/image10.jpg" },
-      { id: 10, title: "タミヤ スミ入れ塗料 (ブラック)", grade: "TOOL", price: 100, origPrice: 500, prime: true, rating: 4.7, reviews: 2100, img: "images/image11.jpg" },
-      { id: 11, title: "RG 1/144 Hi-νガンダム", grade: "RG", price: 520, origPrice: 5280, prime: true, rating: 4.9, reviews: 2890, img: "images/image12.jpg" },
-      { id: 12, title: "ガンダムマーカー スミいれ用 極細タイプ ブラック", grade: "TOOL", price: 100, origPrice: 250, prime: true, rating: 4.5, reviews: 1500, img: "images/image13.jpg" }
+    // --- 1. ガンプラデータ (image1.jpg〜image13.jpg) ---
+    const gunplaProducts = [
+      { id: 1, title: "HGUC 1/144 RX-78-2 ガンダム", grade: "HG", price: 1100, origPrice: 1320, prime: true, rating: 4.7, reviews: 2430, img: "images/image1.jpg" },
+      { id: 2, title: "RG 1/144 ユニコーンガンダム", grade: "RG", price: 4180, origPrice: 4400, prime: true, rating: 4.8, reviews: 1850, img: "images/image2.jpg" },
+      { id: 3, title: "MG 1/100 サザビー Ver.Ka", grade: "MG", price: 9900, origPrice: 10450, prime: true, rating: 4.9, reviews: 3120, img: "images/image3.jpg" },
+      { id: 4, title: "ENTRY GRADE 1/144 ストライクガンダム", grade: "EG", price: 770, origPrice: 880, prime: true, rating: 4.6, reviews: 980, img: "images/image4.jpg" },
+      { id: 5, title: "HGCE 1/144 フリーダムガンダム", grade: "HG", price: 1980, origPrice: 2200, prime: true, rating: 4.7, reviews: 1540, img: "images/image5.jpg" },
+      { id: 6, title: "MG 1/100 Ζガンダム Ver.Ka", grade: "MG", price: 7150, origPrice: 7480, prime: true, rating: 4.9, reviews: 890, img: "images/image6.jpg" },
+      { id: 7, title: "ゴッドハンド アルティメットニッパー 5.0", grade: "TOOL", price: 5280, origPrice: 5500, prime: true, rating: 4.9, reviews: 4200, img: "images/image7.jpg" },
+      { id: 8, title: "PG UNLEASHED 1/60 RX-78-2 ガンダム", grade: "PG", price: 27500, origPrice: 29700, prime: true, rating: 5.0, reviews: 1120, img: "images/image9.jpg" },
+      { id: 9, title: "HG 1/144 水星の魔女 ガンダムエアリアル", grade: "HG", price: 1430, origPrice: 1540, prime: true, rating: 4.8, reviews: 3500, img: "images/image10.jpg" },
+      { id: 10, title: "タミヤ スミ入れ塗料 (ブラック)", grade: "TOOL", price: 440, origPrice: 500, prime: true, rating: 4.7, reviews: 2100, img: "images/image11.jpg" },
+      { id: 11, title: "RG 1/144 Hi-νガンダム", grade: "RG", price: 4950, origPrice: 5280, prime: true, rating: 4.9, reviews: 2890, img: "images/image12.jpg" },
+      { id: 12, title: "ガンダムマーカー スミいれ用 極細タイプ ブラック", grade: "TOOL", price: 220, origPrice: 250, prime: true, rating: 4.5, reviews: 1500, img: "images/image13.jpg" }
     ];
 
-    function redirectToLogin() {
-      window.location.href = 'login.html';
+    // --- 2. HHKB・キーボードデータ (kb1.jpg〜kb8.jpg) ---
+    const keyboardProducts = [
+      { id: 101, title: "PFU Happy Hacking Keyboard HHKB Studio (メカニカル)", grade: "HHKB", price: 44000, origPrice: 46200, prime: true, rating: 4.9, reviews: 920, img: "images/kb1.jpg" },
+      { id: 102, title: "PFU HHKB Professional HYBRID Type-S 墨 (英語配列)", grade: "HHKB", price: 36850, origPrice: 38500, prime: true, rating: 4.9, reviews: 2400, img: "images/kb2.jpg" },
+      { id: 103, title: "PFU HHKB Professional HYBRID Type-S 雪 (日本語配列)", grade: "HHKB", price: 38500, origPrice: 40000, prime: true, rating: 5.0, reviews: 1850, img: "images/kb3.jpg" },
+      { id: 104, title: "PFU HHKB用 無刻印キートップセット (墨)", grade: "KEYCAP", price: 7700, origPrice: 8250, prime: true, rating: 4.8, reviews: 760, img: "images/kb4.jpg" },
+      { id: 105, title: "PFU HHKB用 英語配列キートップセット (白)", grade: "KEYCAP", price: 7700, origPrice: 8250, prime: true, rating: 4.7, reviews: 540, img: "images/kb5.jpg" },
+      { id: 106, title: "HHKB専用ルーフ (スモークハードカバー)", grade: "ACCESSORY", price: 4400, origPrice: 4950, prime: true, rating: 4.6, reviews: 1120, img: "images/kb6.jpg" },
+      { id: 107, title: "HHKB専用 ウォールナット無垢材パームレスト", grade: "ACCESSORY", price: 5980, origPrice: 6600, prime: true, rating: 4.8, reviews: 890, img: "images/kb7.jpg" },
+      { id: 108, title: "PFU キースイッチ用吸音マット・静音チューニングキット", grade: "ACCESSORY", price: 2980, origPrice: 3300, prime: true, rating: 4.5, reviews: 410, img: "images/kb8.jpg" }
+    ];
+
+    // --- 3. 学校DX・情報整理 書籍データ (books1.jpg〜books4.jpg) ---
+    const booksProducts = [
+      { id: 201, title: "逆境に負けない 学校DX物語", grade: "DX", price: 1650, origPrice: 1800, prime: true, rating: 4.8, reviews: 310, img: "images/books1.jpg" },
+      { id: 202, title: "自分だけの情報整理術を見つけ出す ふかぼり仕事術", grade: "SKILL", price: 1760, origPrice: 1980, prime: true, rating: 4.9, reviews: 420, img: "images/books2.jpg" },
+      { id: 203, title: "現役高校教師の「行動につながる」情報マネジメント術 (デジタルノート活用術)", grade: "NOTE", price: 1980, origPrice: 2200, prime: true, rating: 4.9, reviews: 580, img: "images/books3.jpg" },
+      { id: 204, title: "仕事がサクサク進む 教師のiPad仕事術", grade: "IPAD", price: 1870, origPrice: 2050, prime: true, rating: 4.9, reviews: 750, img: "images/books4.jpg" }
+    ];
+
+    // --- 4. コーヒー焙煎・生豆データ (cof1.jpg〜cof8.jpg) ---
+    const coffeeProducts = [
+      { id: 301, title: "家庭用電動コーヒー焙煎機 (サンプルロースター型 / 温度コントロール付)", grade: "ROASTER", price: 42000, origPrice: 46800, prime: true, rating: 4.8, reviews: 520, img: "images/cof1.jpg" },
+      { id: 302, title: "ブラジル サントス No.2 生豆 (5kg 麻袋パック / 厳選スペシャルティ)", grade: "BEANS", price: 4980, origPrice: 5600, prime: true, rating: 4.9, reviews: 1250, img: "images/cof2.jpg" },
+      { id: 303, title: "エチオピア イルガチェフェ G-1 ウォッシュド 生豆 (2kg)", grade: "BEANS", price: 3400, origPrice: 3900, prime: true, rating: 4.9, reviews: 980, img: "images/cof3.jpg" },
+      { id: 304, title: "コロンビア スプレモ スペシャルティ生豆 (3kg)", grade: "BEANS", price: 4500, origPrice: 4980, prime: true, rating: 4.7, reviews: 810, img: "images/cof4.jpg" },
+      { id: 305, title: "焙煎用 デジタル赤外線表面温度計 (ビーム測温タイプ)", grade: "TOOL", price: 4800, origPrice: 5500, prime: true, rating: 4.6, reviews: 640, img: "images/cof5.jpg" },
+      { id: 306, title: "チタン製 焙煎豆冷却用メッシュトレイ ＆ ブロアファンセット", grade: "TOOL", price: 6500, origPrice: 7200, prime: true, rating: 4.8, reviews: 390, img: "images/cof6.jpg" },
+      { id: 307, title: "焙煎度合い比較カラーチャート ＆ カッピングスプーン", grade: "TOOL", price: 2400, origPrice: 2800, prime: true, rating: 4.5, reviews: 310, img: "images/cof7.jpg" },
+      { id: 308, title: "自家焙煎豆 保存用アロマバルブ付きキャニスター 4個セット", grade: "TOOL", price: 3800, origPrice: 4400, prime: true, rating: 4.9, reviews: 1540, img: "images/cof8.jpg" }
+    ];
+
+    let currentCategory = 'gunpla';
+
+    function getCurrentProducts() {
+      if (currentCategory === 'gunpla') return gunplaProducts;
+      if (currentCategory === 'keyboard') return keyboardProducts;
+      if (currentCategory === 'books') return booksProducts;
+      return coffeeProducts;
+    }
+
+    function switchCategory(cat) {
+      currentCategory = cat;
+
+      const selectElem = document.getElementById('searchCategorySelect');
+      if (selectElem) selectElem.value = cat;
+
+      // タブのスタイル切り替え
+      ['gunpla', 'keyboard', 'books', 'coffee'].forEach(c => {
+        const btn = document.getElementById(`nav${c.charAt(0).toUpperCase() + c.slice(1)}Btn`);
+        if (btn) {
+          if (c === cat) {
+            btn.className = "font-bold border-b-2 border-amber-400 text-amber-300 px-2 py-0.5 cursor-pointer";
+          } else {
+            btn.className = "font-bold text-gray-300 hover:text-white px-2 py-0.5 cursor-pointer";
+          }
+        }
+      });
+
+      if (cat === 'gunpla') {
+        document.getElementById('heroTitle').innerHTML = 'ガンプラ・プラモデル<br><span class="text-[#febd69]">春の特別ポイント還元フェア</span>';
+        document.getElementById('heroDesc').innerText = '人気のHG・RG・MGガンプラやアルティメットニッパーが最大20%ポイント還元！';
+        document.getElementById('carouselSectionTitle').innerText = 'ガンプラ 数量限定タイムセール';
+        document.getElementById('gridSectionTitle').innerHTML = '<span class="w-2.5 h-6 bg-[#f90] inline-block rounded"></span> Yamazonがおすすめするガンプラ一覧';
+        renderFilterButtons([
+          { label: "すべて", value: "ALL" }, { label: "HG (1/144)", value: "HG" }, { label: "RG (1/144)", value: "RG" },
+          { label: "MG (1/100)", value: "MG" }, { label: "PG (1/60)", value: "PG" }, { label: "EG (1/144)", value: "EG" }, { label: "工具・塗料", value: "TOOL" }
+        ]);
+      } else if (cat === 'keyboard') {
+        document.getElementById('heroTitle').innerHTML = 'HHKB・メカニカルキーボード<br><span class="text-[#febd69]">プロフェッショナル特選ストア</span>';
+        document.getElementById('heroDesc').innerText = '極上のキータッチを生み出すHHKB StudioやHYBRID Type-S、専用アクセサリが勢ぞろい！';
+        document.getElementById('carouselSectionTitle').innerText = 'HHKB・キーボード タイムセール';
+        document.getElementById('gridSectionTitle').innerHTML = '<span class="w-2.5 h-6 bg-[#f90] inline-block rounded"></span> YamazonおすすめのHHKB・周辺機器一覧';
+        renderFilterButtons([
+          { label: "すべて", value: "ALL" }, { label: "HHKB本体", value: "HHKB" }, { label: "キーキャップ", value: "KEYCAP" }, { label: "アクセサリー", value: "ACCESSORY" }
+        ]);
+      } else if (cat === 'books') {
+        document.getElementById('heroTitle').innerHTML = '学校DX・情報整理スキル<br><span class="text-[#febd69]">教員のiPad・デジタルノート活用術フェア</span>';
+        document.getElementById('heroDesc').innerText = '「学校DX物語」「ふかぼり仕事術」「情報マネジメント術」「教師のiPad仕事術」など必読の教育書籍！';
+        document.getElementById('carouselSectionTitle').innerText = '学校DX・情報整理 書籍タイムセール';
+        document.getElementById('gridSectionTitle').innerHTML = '<span class="w-2.5 h-6 bg-[#f90] inline-block rounded"></span> 学校DX・情報整理・教師のiPad仕事術 書籍一覧';
+        renderFilterButtons([
+          { label: "すべて", value: "ALL" }, { label: "学校DX", value: "DX" }, { label: "ふかぼり仕事術", value: "SKILL" },
+          { label: "情報マネジメント", value: "NOTE" }, { label: "iPad仕事術", value: "IPAD" }
+        ]);
+      } else if (cat === 'coffee') {
+        document.getElementById('heroTitle').innerHTML = '自家焙煎コーヒー・生豆<br><span class="text-[#febd69]">ロースター＆スペシャルティ生豆フェア</span>';
+        document.getElementById('carouselSectionTitle').innerText = 'コーヒー焙煎グッズ タイムセール';
+        document.getElementById('heroDesc').innerText = '自宅で極上の焙煎体験を。高性能な家庭用焙煎機からブラジル・エチオピア等の厳選生豆まで！';
+        document.getElementById('gridSectionTitle').innerHTML = '<span class="w-2.5 h-6 bg-[#f90] inline-block rounded"></span> コーヒー焙煎機・生豆・ツール一覧';
+        renderFilterButtons([
+          { label: "すべて", value: "ALL" }, { label: "焙煎機", value: "ROASTER" }, { label: "生豆", value: "BEANS" }, { label: "ツール", value: "TOOL" }
+        ]);
+      }
+
+      renderProducts(getCurrentProducts());
+      renderCarousel();
+    }
+
+    function renderFilterButtons(filters) {
+      const container = document.getElementById('filterButtonsContainer');
+      container.innerHTML = `<span class="text-gray-500 whitespace-nowrap mr-2"><i class="fa-solid fa-filter mr-1"></i> 絞り込み:</span>` +
+        filters.map(f => `
+          <button onclick="filterGrade('${f.value}')" class="grade-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer">
+            ${f.label}
+          </button>
+        `).join('');
+    }
+
+    function onCategorySelectChange(val) {
+      if (val) switchCategory(val);
+    }
+
+    function redirectToLogin(event) {
+      if (event) event.stopPropagation();
+      const loader = document.getElementById('pageLoader');
+      loader.classList.remove('hidden');
+      loader.classList.add('flex');
+      
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 800);
     }
 
     function renderProducts(items) {
@@ -338,7 +382,7 @@
       }
 
       grid.innerHTML = items.map(p => `
-        <div class="bg-white rounded-lg border border-gray-200 p-4 flex flex-col justify-between hover:shadow-xl transition cursor-pointer group" onclick="redirectToLogin()">
+        <div class="bg-white rounded-lg border border-gray-200 p-4 flex flex-col justify-between hover:shadow-xl transition cursor-pointer group" onclick="redirectToLogin(event)">
           <div>
             <div class="w-full h-52 rounded bg-gray-50 mb-3 overflow-hidden flex items-center justify-center relative border border-gray-100">
               <img src="${p.img}" alt="${p.title}" class="w-full h-full object-contain p-2 group-hover:scale-105 transition" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'><span>${p.title}</span><span class=\'text-amber-400 mt-1\'>(${p.grade})</span></div>'">
@@ -352,11 +396,10 @@
             <div class="flex items-baseline gap-1 my-1">
               <span class="text-[10px] text-gray-500">￥</span>
               <span class="text-xl font-bold text-gray-900">${p.price.toLocaleString()}</span>
-              ${p.origPrice ? `<span class="text-[10px] text-gray-400 line-through">￥${p.origPrice.toLocaleString()}</span>` : ''}
             </div>
-            ${p.prime ? `<div class="text-[10px] font-bold text-sky-600 mb-2 flex items-center gap-1"><i class="fa-solid fa-check text-amber-500"></i> prime <span class="text-gray-500 font-normal">翌日お届け</span></div>` : ''}
+            ${p.prime ? `<div class="text-[10px] font-bold text-sky-600 mb-2 flex items-center gap-1"><i class="fa-solid fa-check text-amber-500"></i> prime</div>` : ''}
           </div>
-          <button onclick="event.stopPropagation(); redirectToLogin()" class="w-full amazon-btn-yellow text-xs py-2 rounded font-bold text-gray-900 shadow-sm cursor-pointer">
+          <button onclick="redirectToLogin(event)" class="w-full amazon-btn-yellow text-xs py-2 rounded font-bold text-gray-900 shadow-sm cursor-pointer">
             カートに追加
           </button>
         </div>
@@ -365,9 +408,9 @@
 
     function renderCarousel() {
       const carousel = document.getElementById('dealCarousel');
-      const deals = products.slice(0, 6);
+      const deals = getCurrentProducts().slice(0, 6);
       carousel.innerHTML = deals.map(p => `
-        <div onclick="redirectToLogin()" class="w-44 flex-shrink-0 bg-gray-50 border p-3 rounded cursor-pointer hover:shadow-md transition">
+        <div onclick="redirectToLogin(event)" class="w-44 flex-shrink-0 bg-gray-50 border p-3 rounded cursor-pointer hover:shadow-md transition">
           <div class="h-32 bg-white rounded overflow-hidden p-1 flex items-center justify-center mb-2">
             <img src="${p.img}" class="max-h-full object-contain" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'img-fallback w-full h-full\'>${p.grade}</div>'">
           </div>
@@ -379,14 +422,16 @@
     }
 
     function filterGrade(grade) {
-      if (grade === 'ALL') renderProducts(products);
-      else renderProducts(products.filter(p => p.grade === grade));
+      const allList = getCurrentProducts();
+      if (grade === 'ALL') renderProducts(allList);
+      else renderProducts(allList.filter(p => p.grade === grade));
     }
 
     function triggerSearch() {
       const q = document.getElementById('searchInput').value.toLowerCase().trim();
-      if (!q) { renderProducts(products); return; }
-      renderProducts(products.filter(p => p.title.toLowerCase().includes(q) || p.grade.toLowerCase().includes(q)));
+      const allList = getCurrentProducts();
+      if (!q) { renderProducts(allList); return; }
+      renderProducts(allList.filter(p => p.title.toLowerCase().includes(q) || p.grade.toLowerCase().includes(q)));
     }
 
     function toggleSideMenu(open) {
@@ -401,8 +446,8 @@
       }
     }
 
-    renderProducts(products);
-    renderCarousel();
+    // 初期化
+    switchCategory('gunpla');
   </script>
 </body>
 </html>
