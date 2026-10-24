@@ -24,14 +24,14 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between items-center pt-8 pb-12 px-4 text-gray-900 relative">
 
-  <!-- ==================== STEP 2: 認証コード入力モーダル ==================== -->
+  <!-- ==================== 認証コード入力モーダル ==================== -->
   <div id="verifyModal" class="fixed inset-0 bg-black/80 z-50 hidden flex-col items-center justify-center p-4">
     <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl border-2 border-amber-500">
       <div class="text-center mb-4">
-        <span class="bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full">📩 メール送信完了</span>
+        <span class="bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full">📩 確認メールを送信しました</span>
         <h2 class="text-xl font-bold mt-2 text-gray-900">メールアドレスの確認</h2>
         <p class="text-xs text-gray-600 mt-1">
-          <span id="targetEmailDisplay" class="font-bold text-blue-600"></span> 宛にリアルな確認コードを送信しました。<br>受信トレイ（または迷惑メールフォルダ）をご確認ください。
+          <span id="targetEmailDisplay" class="font-bold text-blue-600"></span> 宛に確認コード（6桁）を送信しました。<br>ご自身の受信トレイ（または迷惑メールフォルダ）をご確認ください。
         </p>
       </div>
 
@@ -56,18 +56,22 @@
   <div id="regLoader" class="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-40 hidden flex-col items-center justify-center text-white transition-opacity duration-300">
     <div class="bg-white text-gray-900 px-6 py-5 rounded-lg shadow-2xl flex items-center gap-4 border border-gray-200">
       <div class="w-7 h-7 border-4 border-[#f90] border-t-transparent rounded-full animate-spin"></div>
-      <span class="text-sm font-bold tracking-wide">実際にメールを送信中...</span>
+      <span class="text-sm font-bold tracking-wide">本物の確認メールを送信中...</span>
     </div>
   </div>
 
   <!-- ==================== 登録フォーム ==================== -->
   <div class="w-full max-w-[350px] flex flex-col items-center">
+    <!-- Logo -->
     <a href="index.html" class="mb-5 text-2xl font-bold tracking-tight">
       yamazon<span class="text-[#f90] font-normal text-sm leading-none">.co.jp</span>
     </a>
 
     <div class="w-full border border-gray-300 rounded-md p-6 bg-white shadow-sm">
-      <h1 class="text-2xl font-normal mb-4">アカウントを作成</h1>
+      <h1 class="text-2xl font-normal mb-1">アカウントを作成</h1>
+      <p class="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 p-2 rounded mb-4 font-bold">
+        ⚠️ 確認コードを受け取るため、<span class="underline">本物のメールアドレス</span>を入力してください。
+      </p>
 
       <form onsubmit="handleRegisterSubmit(event)" class="space-y-3">
         <div>
@@ -76,13 +80,14 @@
         </div>
 
         <div>
-          <label class="block text-xs font-bold mb-1">Eメール (※実際に届くアドレスを入力)</label>
+          <label class="block text-xs font-bold mb-1">Eメール (※実際に受信できるアドレス)</label>
           <input type="email" id="regEmail" required placeholder="your-real-email@example.com" class="w-full border border-gray-400 rounded px-2.5 py-1.5 text-sm outline-none focus:border-amber-500">
         </div>
 
         <div>
           <label class="block text-xs font-bold mb-1">パスワード</label>
           <input type="password" id="regPassword" required placeholder="6文字以上" class="w-full border border-gray-400 rounded px-2.5 py-1.5 text-sm outline-none focus:border-amber-500">
+          <p class="text-[10px] text-gray-500 mt-0.5">i パスワードは6文字以上である必要があります。</p>
         </div>
 
         <div>
@@ -95,21 +100,31 @@
         </button>
       </form>
 
+      <p class="text-[11px] text-gray-600 mt-4 leading-relaxed">
+        続行することで、Yamazonの<a href="#" class="text-sky-700 hover:underline">利用規約</a>および<a href="#" class="text-sky-700 hover:underline">プライバシー規約</a>に同意することになります。
+      </p>
+
       <div class="mt-4 pt-3 border-t border-gray-200 text-xs">
         すでにアカウントをお持ちですか？ <a href="login.html" class="text-sky-700 hover:underline font-bold">ログイン</a>
       </div>
     </div>
   </div>
 
+  <!-- Footer -->
   <footer class="text-[11px] text-gray-500 text-center mt-12 pt-6 border-t border-gray-200 w-full max-w-[500px]">
+    <div class="flex justify-center gap-6 mb-3 text-sky-700">
+      <a href="#" class="hover:underline">利用規約</a>
+      <a href="#" class="hover:underline">プライバシー規約</a>
+      <a href="#" class="hover:underline">ヘルプ</a>
+    </div>
     <p>© 1996-2026, Yamazon.com, Inc. or its affiliates</p>
   </footer>
 
   <script>
-    // ⚠️★ ここをご自身の EmailJS のキーに書き換えてください ★⚠️
-    const EMAILJS_PUBLIC_KEY = "HtR4fWcElwEOmMB-0";  // 例: "user_Xxx123456"
-    const EMAILJS_SERVICE_ID = "service_3kgj69b";  // 例: "service_abc123"
-    const EMAILJS_TEMPLATE_ID = "template_sknaghb"; // 例: "template_xyz789"
+    // ⚠️★ ご自身の EmailJS のキーに書き換えてください ★⚠️
+    const EMAILJS_PUBLIC_KEY = "HtR4fWcElwEOmMB-0";  
+    const EMAILJS_SERVICE_ID = "service_3kgj69b";  
+    const EMAILJS_TEMPLATE_ID = "template_sknaghb"; 
 
     let generatedOtp = "";
     let pendingUserData = {};
@@ -122,16 +137,16 @@
       const passConf = document.getElementById('regPasswordConfirm').value;
 
       if (pass !== passConf) {
-        alert("パスワードが一致しません。");
+        alert("パスワードが一致しません。もう一度確認してください。");
         return;
       }
 
       pendingUserData = { name, email, pass };
 
-      // ランダムな6桁コードを作成
+      // ランダムな6桁コードを生成
       generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
-      // ローディング開始
+      // ローディング画面を表示
       const loader = document.getElementById('regLoader');
       loader.classList.remove('hidden');
       loader.classList.add('flex');
@@ -139,14 +154,14 @@
       // EmailJSの初期化
       emailjs.init(EMAILJS_PUBLIC_KEY);
 
-      // メール送信パラメータ
+      // メール送信用のパラメータ（Template側で {{passcode}} や {{to_name}} を設定しておく必要があります）
       const templateParams = {
         to_email: email,
         to_name: name,
         passcode: generatedOtp
       };
 
-      // 実際にメールを送信
+      // 実際に本物のメールを送信
       emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
         .then(function(response) {
           loader.classList.remove('flex');
@@ -158,7 +173,7 @@
         }, function(error) {
           loader.classList.remove('flex');
           loader.classList.add('hidden');
-          alert("メールの送信に失敗しました。\nキーの設定（Public Key等）が正しいか確認してください。\nエラー: " + JSON.stringify(error));
+          alert("メールの送信に失敗しました。\nEmailJSのキー設定（Public Key / Service ID / Template ID）が正しいかご確認ください。\nエラー詳細: " + JSON.stringify(error));
         });
     }
 
@@ -172,12 +187,17 @@
       const enteredOtp = document.getElementById('otpInput').value.trim();
 
       if (enteredOtp !== generatedOtp) {
-        alert("確認コードが間違っています。メールに届いた数字をもう一度ご確認ください。");
+        alert("確認コードが間違っています。メールに届いた6桁の数字をもう一度ご確認ください。");
         return;
       }
 
-      alert(`🎉 登録が完了しました！\nようこそ、${pendingUserData.name} 様！`);
-      window.location.href = 'index.html';
+      // 登録成功時にブラウザ(localStorage)にユーザー情報を保存
+      localStorage.setItem('yamazon_registered_user', JSON.stringify(pendingUserData));
+
+      alert(`🎉 認証が成功し、アカウントが作成されました！\nようこそ、${pendingUserData.name} 様！\nログイン画面へ移動します。`);
+      
+      // ログイン画面へリダイレクト
+      window.location.href = 'login.html';
     }
   </script>
 </body>
