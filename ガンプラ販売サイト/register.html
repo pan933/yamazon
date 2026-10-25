@@ -24,31 +24,44 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between items-center pt-8 pb-12 px-4 text-gray-900 relative">
 
-  <!-- ==================== 認証コード入力モーダル (本物そっくりデザイン) ==================== -->
+  <!-- ==================== 認証コード入力・完了モーダル ==================== -->
   <div id="verifyModal" class="fixed inset-0 bg-black/50 backdrop-blur-[1px] z-50 hidden flex-col items-center justify-center p-4">
     <div class="bg-white rounded-md max-w-[380px] w-full p-6 shadow-md border border-gray-300">
-      <div class="text-left mb-4">
-        <h2 class="text-2xl font-normal text-gray-900 mb-2">メールアドレスの確認</h2>
-        <p class="text-xs text-gray-700 leading-relaxed">
-          Yamazon確認コードを次の宛先に送信しました: <br><span id="targetEmailDisplay" class="font-bold text-gray-900"></span>
-        </p>
-      </div>
-
-      <form onsubmit="verifyOtp(event)" class="space-y-4">
-        <div>
-          <label class="block text-xs font-bold mb-1 text-gray-800">確認コードを入力</label>
-          <input type="text" id="otpInput" maxlength="6" required placeholder="" class="w-full border border-gray-400 rounded px-3 py-2 text-sm outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+      
+      <!-- 入力ステップ -->
+      <div id="otpStepContent">
+        <div class="text-left mb-4">
+          <h2 class="text-2xl font-normal text-gray-900 mb-2">メールアドレスの確認</h2>
+          <p class="text-xs text-gray-700 leading-relaxed">
+            Yamazon確認コードを次の宛先に送信しました: <br><span id="targetEmailDisplay" class="font-bold text-gray-900"></span>
+          </p>
         </div>
 
-        <button type="submit" class="w-full amazon-btn text-xs py-2 rounded-md shadow-sm font-bold text-gray-900 cursor-pointer">
-          アカウントの作成を完了する
-        </button>
-      </form>
+        <form onsubmit="verifyOtp(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold mb-1 text-gray-800">確認コードを入力</label>
+            <input type="text" id="otpInput" maxlength="6" required placeholder="" class="w-full border border-gray-400 rounded px-3 py-2 text-sm outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+          </div>
 
-      <div class="mt-4 pt-3 border-t border-gray-200 text-xs flex justify-between items-center">
-        <a href="#" onclick="resendOtp(event)" class="text-sky-700 hover:underline">コードを再送信</a>
-        <button onclick="closeVerifyModal()" class="text-sky-700 hover:underline">入力内容を修正する</button>
+          <button type="submit" class="w-full amazon-btn text-xs py-2 rounded-md shadow-sm font-bold text-gray-900 cursor-pointer">
+            アカウントの作成を完了する
+          </button>
+        </form>
+
+        <div class="mt-4 pt-3 border-t border-gray-200 text-xs flex justify-between items-center">
+          <a href="#" onclick="resendOtp(event)" class="text-sky-700 hover:underline">コードを再送信</a>
+          <button onclick="closeVerifyModal()" class="text-sky-700 hover:underline">キャンセル</button>
+        </div>
       </div>
+
+      <!-- 成功ステップ（alertを使わず、モーダル内でスムーズに表示） -->
+      <div id="successStepContent" class="hidden text-center py-4">
+        <div class="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl font-bold">✓</div>
+        <h3 class="text-lg font-bold text-gray-900 mb-1">アカウントが作成されました</h3>
+        <p class="text-xs text-gray-600 mb-4">ログイン画面に移動しています...</p>
+        <div class="w-6 h-6 border-2 border-[#f90] border-t-transparent rounded-full animate-spin mx-auto"></div>
+      </div>
+
     </div>
   </div>
 
@@ -70,7 +83,7 @@
     <div class="w-full border border-gray-300 rounded-md p-6 bg-white shadow-sm">
       <h1 class="text-2xl font-normal mb-2">アカウントを作成</h1>
       <p class="text-[11px] text-gray-600 bg-gray-50 border border-gray-200 p-2 rounded mb-4">
-        ※ メールは実在し確認することができるアドレスを入力してください
+        ※ メールを取得可能な実在するメールアドレスを入力してください。
       </p>
 
       <form onsubmit="handleRegisterSubmit(event)" class="space-y-3">
@@ -121,7 +134,6 @@
   </footer>
 
   <script>
-    // ⚠️★ ご自身の EmailJS のキーに書き換えてください ★⚠️
     const EMAILJS_PUBLIC_KEY = "HtR4fWcElwEOmMB-0";  
     const EMAILJS_SERVICE_ID = "service_3kgj69b";  
     const EMAILJS_TEMPLATE_ID = "template_sknaghb"; 
@@ -143,15 +155,12 @@
 
       pendingUserData = { name, email, pass };
 
-      // ランダムな6桁コードを生成
       generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
-      // ローディング画面を表示
       const loader = document.getElementById('regLoader');
       loader.classList.remove('hidden');
       loader.classList.add('flex');
 
-      // EmailJSの初期化
       emailjs.init(EMAILJS_PUBLIC_KEY);
 
       const templateParams = {
@@ -160,19 +169,24 @@
         passcode: generatedOtp
       };
 
-      // 実際に本物のメールを送信
       emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
         .then(function(response) {
           loader.classList.remove('flex');
           loader.classList.add('hidden');
 
+          // モーダルをリセットして表示
+          document.getElementById('otpStepContent').classList.remove('hidden');
+          document.getElementById('successStepContent').classList.add('hidden');
+          document.getElementById('otpInput').value = "";
           document.getElementById('targetEmailDisplay').innerText = email;
-          document.getElementById('verifyModal').classList.remove('hidden');
-          document.getElementById('verifyModal').classList.add('flex');
+          
+          const modal = document.getElementById('verifyModal');
+          modal.classList.remove('hidden');
+          modal.classList.add('flex');
         }, function(error) {
           loader.classList.remove('flex');
           loader.classList.add('hidden');
-          alert("メールの送信に失敗しました。\nEmailJSの設定内容をご確認ください。\nエラー: " + JSON.stringify(error));
+          alert("メールの送信に失敗しました。\nエラー: " + JSON.stringify(error));
         });
     }
 
@@ -198,8 +212,13 @@
       // 登録成功時にブラウザにユーザー情報を保存
       localStorage.setItem('yamazon_registered_user', JSON.stringify(pendingUserData));
 
-      alert(`🎉 認証が成功し、アカウントが作成されました！\nログイン画面へ移動します。`);
-      window.location.href = 'login.html';
+      // alertを排除し、モーダル内で成功演出を出して自然に遷移
+      document.getElementById('otpStepContent').classList.add('hidden');
+      document.getElementById('successStepContent').classList.remove('hidden');
+
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 1500);
     }
   </script>
 </body>
